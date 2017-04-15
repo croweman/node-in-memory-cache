@@ -1,0 +1,20 @@
+
+
+-- remove all old values on timeout
+-- cloning
+-- option to store undefined
+
+
+
+-- set default ttl across all
+
+-- what if want to get expiry time and value??
+
+-- cleanup!! on timeout every minute?
+
+fluent
+
+cache forever
+
+
+document everything

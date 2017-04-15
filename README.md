@@ -1,9 +1,8 @@
-# request-authorization
+# in-memory-cache
 
-[![build status](https://travis-ci.org/croweman/request-authorization.svg)](https://travis-ci.org/croweman/request-authorization) [![npm version](https://badge.fury.io/js/request-authorization.svg)](https://www.npmjs.com/package/request-authorization)
+[![build status](https://travis-ci.org/croweman/node-in-memory-cache.svg)](https://travis-ci.org/croweman/node-in-memory-cache) [![npm version](https://badge.fury.io/js/node-in-memory-cache.svg)](https://www.npmjs.com/package/in-memory-cache)
 
-
-Node module for signing and authorizing requests.
+Node module for in memory caching.
 
 ## Usage
 

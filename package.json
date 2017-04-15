@@ -1,28 +1,41 @@
 {
-  "name": "memory-cache",
+  "name": "in-memory-cache",
   "version": "1.0.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/croweman/memory-cache.git"
+    "url": "git://github.com/croweman/in-memory-cache.git"
   },
   "description": "Node module for in memory caching",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/istanbul test ./node_modules/mocha/bin/_mocha -- specs -R spec --recursive --timeout 1000"
+    "test": "node_modules/.bin/istanbul test ./node_modules/mocha/bin/_mocha -- specs -R spec --recursive --timeout 2000"
   },
-  "dependencies": {},
+  "contributors": [
+    {
+      "name": "Lee Crowe",
+      "email": "leecrowe81@googlemail.co.uk"
+    }
+  ],
+  "dependencies": {
+    "clone": "^2.1.1",
+    "debug": "^2.6.3",
+    "uuid": "^3.0.1"
+  },
   "devDependencies": {
     "bluebird": "^3.5.0",
     "istanbul": "^0.3.2",
     "mocha": "^2.0.1",
-    "should": "^4.3.0",
-    "uuid": "^3.0.1"
+    "should": "^4.3.0"
   },
   "keywords": [
     "memory",
     "cache",
     "node",
-    "in-memory"
+    "in-memory",
+    "inmemory",
+    "ram",
+    "simple",
+    "storage"
   ],
   "author": "Lee Crowe",
   "license": "MIT"
