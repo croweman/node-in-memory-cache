@@ -1,6 +1,6 @@
 {
   "name": "cache-memory",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "repository": {
     "type": "git",
     "url": "git://github.com/croweman/node-in-memory-cache.git"

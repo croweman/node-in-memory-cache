@@ -1,6 +1,6 @@
 # cache-memory
 
-[![build status](https://travis-ci.org/croweman/node-in-memory-cache.svg)](https://travis-ci.org/croweman/node-in-memory-cache) [![npm version](https://badge.fury.io/js/node-in-memory-cache.svg)](https://www.npmjs.com/package/cache-memory)
+[![build status](https://travis-ci.org/croweman/node-in-memory-cache.svg)](https://travis-ci.org/croweman/node-in-memory-cache) [![npm version](https://badge.fury.io/js/cache-memory.svg)](https://www.npmjs.com/package/cache-memory)
 
 Node module for in memory caching.
 
@@ -58,11 +58,13 @@ Result 1: {"value":{"snack":"crisps"},"expiry":"2017-04-18T08:15:19.087Z"}
 Result 2: {"value":{"snack":"chocolate"},"expiry":"2017-04-18T08:15:19.091Z"}
 ```
 
-##API
+## API
 
-## Cache
+## Cache - cache-memory object
 
-# create
+Object is used to create cacher instances, default configuration variables and scheduled object cleanup.
+
+## create
 
 ```js
 let cacher = require('cache-memory')
@@ -71,14 +73,14 @@ let cacher = require('cache-memory')
 
 Creates a new cacher instance.
 
-# options
+### options
  - `clone`: (default: `true`) Defines whether objects should be cloned when set in and retrieved from cache.
  - `id`: The id of the cacher (string value).
  - `storeUndefinedObjects`: (default: false) Defines whether undefined objects should be stored in memory.
  - `ttl`: (default: `0`) Defines in seconds how long an object should be stored in memory.
    `0` = Forever
 
-# clone
+## clone
 
 ```js
 require('cache-memory')
@@ -87,7 +89,7 @@ require('cache-memory')
 
 Turns off object cloning (default `true`).
 
-# storeUndefinedObjects
+## storeUndefinedObjects
 
 ```js
 require('cache-memory')
@@ -96,7 +98,7 @@ require('cache-memory')
 
 Allows undefined objects to be stored in cache (default `false`).
 
-# cleanup
+## cleanup
 
 ```js
 require('cache-memory')
@@ -105,7 +107,7 @@ require('cache-memory')
 
 Forces expired objects to be removed from cache every `60` seconds.  By default `no cleanup` is performed.
 
-# clear
+## clear
 
 ```js
 require('cache-memory').clear();
@@ -113,7 +115,7 @@ require('cache-memory').clear();
 
 Clears the in memory cache of all active cache instances.
 
-# cachers
+## cachers
 
 ```js
 let cachers = require('cache-memory').cachers();
@@ -121,7 +123,7 @@ let cachers = require('cache-memory').cachers();
 
 Gets all active cache instances.
 
-# cacher
+## cacher
 
 ```js
 let cacher = require('cache-memory').cacher('snacks');
@@ -129,7 +131,7 @@ let cacher = require('cache-memory').cacher('snacks');
 
 Gets an active cacher by it's id.
 
-# cachedItemsCount
+## cachedItemsCount
 
 ```js
 let count = require('cache-memory').cachedItemsCount();
@@ -137,9 +139,10 @@ let count = require('cache-memory').cachedItemsCount();
 
 Gets the total count of cached objects across all active cachers.
 
-## Cache instance
+## Cache - created cache-memory instance
+It's functions are defined below.
 
-# get
+## get
 
 ```js
 cache.get(key, [options]);
@@ -147,14 +150,14 @@ cache.get(key, [options]);
 
 Gets an object from cache, undefined will be returned if object does not exist.
 
-# options
+### options
  - `clone`: (default: `true`) Defines whether objects should be cloned when set in and retrieved from cache.
  - `id`: The id of the cacher (string value).
  - `storeUndefinedObjects`: (default: `false`) Defines whether undefined objects should be stored in memory.
  - `ttl`: (default: `0`) Defines in seconds how long an object should be stored in memory.
    `0` = Forever
 
-# getExpiry
+## getExpiry
 
 ```js
 cache.getExpiry(key);
@@ -162,7 +165,7 @@ cache.getExpiry(key);
 
 Gets the expiry DateTime of an object in cache, undefined is returned if object is not found.
 
-# set
+## set
 
 ```js
 cache.set(key, value, [options]);
@@ -170,28 +173,28 @@ cache.set(key, value, [options]);
 
 Stores an object in cache.
 
-# options
+## options
  - `storeUndefinedObjects`: (default: global or instance level definition) Defines whether undefined objects should be stored in memory.
  - `ttl`: (default: global or instance level definition) Defines in seconds how long an object should be stored in memory.
    `0` = Forever
 
 If 'storeUndefinedObjects' is false. undefined, null and objects with an IsNull function that returns true will not be stored.
 
-# * getAndSet
+## * getAndSet
 
 ```js
 cache.getAndSet(key, [options]);
 ```
 
-Gets and sets an object in cache.  The getAndSet function is a `generator` function so should be yielded or Promisied etc.
+Gets and sets an object in cache.  The getAndSet function is a `generator` function so should be yielded or Promisified etc.
 
-# options
+### options
  - `generator`: A generator function that will be yielded to return the object value to store in cache.
  - `storeUndefinedObjects`: (default: global or instance level definition) Defines whether undefined objects should be stored in memory.
  - `ttl`: (default: global or instance level definition) Defines in seconds how long an object should be stored in memory.
    `0` = Forever
 
-# clear
+## clear
 
 ```js
 cache.clear();
@@ -199,7 +202,7 @@ cache.clear();
 
 Removes all objects from the cache instance.
 
-# remove
+## remove
 
 ```js
 cache.remove(key);
@@ -207,7 +210,7 @@ cache.remove(key);
 
 Remove the object from cache.
 
-# cachedItemsCount
+## cachedItemsCount
 
 ```js
 cache.cachedItemsCount();
@@ -215,7 +218,7 @@ cache.cachedItemsCount();
 
 Gets the number of objects stored in the cache instance.
 
-# keys
+## keys
 
 ```js
 cache.keys();
