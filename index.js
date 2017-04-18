@@ -4,9 +4,9 @@ const Cacher = require('./lib/cacher');
 const logger = require('./lib/logger');
 
 var cachers = [];
-var defaultTtl = 5 * 60;
+var defaultTtl = 0;
 var defaultClone = true;
-var defaultStoreUndefinedItems = false;
+var defaultStoreUndefinedObjects = false;
 var timeoutId;
 
 function getCachers() {
@@ -26,8 +26,8 @@ var cacherWrapper = {
       options.clone = defaultClone;
     }
 
-    if (options.storeUndefinedItems === undefined || typeof options.storeUndefinedItems !== 'boolean') {
-      options.storeUndefinedItems = defaultStoreUndefinedItems;
+    if (options.storeUndefinedObjects === undefined || typeof options.storeUndefinedObjects !== 'boolean') {
+      options.storeUndefinedObjects = defaultStoreUndefinedObjects;
     }
 
     let cacher = new Cacher(options);
@@ -86,9 +86,9 @@ var cacherWrapper = {
     }
     return cacherWrapper;
   },
-  storeUndefinedItems: (storeUndefinedItems) => {
-    if (storeUndefinedItems !== undefined && typeof storeUndefinedItems === 'boolean') {
-      defaultStoreUndefinedItems = storeUndefinedItems;
+  storeUndefinedObjects: (storeUndefinedObjects) => {
+    if (storeUndefinedObjects !== undefined && typeof storeUndefinedObjects === 'boolean') {
+      defaultStoreUndefinedObjects = storeUndefinedObjects;
     }
     return cacherWrapper;
   },

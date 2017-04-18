@@ -1,10 +1,155 @@
-# in-memory-cache
+# mem-cache
 
-[![build status](https://travis-ci.org/croweman/node-in-memory-cache.svg)](https://travis-ci.org/croweman/node-in-memory-cache) [![npm version](https://badge.fury.io/js/node-in-memory-cache.svg)](https://www.npmjs.com/package/in-memory-cache)
+https://www.npmjs.com/package/memory-cache
+
+https://www.npmjs.com/package/node-cache
+
+[![build status](https://travis-ci.org/croweman/node-mem-cache.svg)](https://travis-ci.org/croweman/node-mem-cache) [![npm version](https://badge.fury.io/js/node-mem-cache.svg)](https://www.npmjs.com/package/mem-cache)
 
 Node module for in memory caching.
 
+## Installation
+
+```js
+npm install mem-cache
+```
+
+# Example usage
+
+```js
+'use strict';
+const cache = require('mem-cache')
+  .create({ ttl: 60});
+
+function * getData() {
+  return { snack: 'chocolate' };
+}
+
+function standardGetAndSetExample() {
+  const key = 'the_key1';
+  let result = cache.get(key);
+
+  if (!result) {
+    cache.set(key, { snack: 'crisps'});
+    result = cache.get(key);
+  }
+
+  return { value: result, expiry: cache.getExpiry(key) };
+}
+
+function * generatorGetAndSetExample() {
+  const key = 'the_key2';
+
+  let result = yield* cache.getAndSet(key, {
+    generator: function * () {
+      return yield* getData();
+    }
+  });
+
+  return { value: result, expiry: cache.getExpiry(key) };
+}
+
+console.log(`Result 1: ${JSON.stringify(standardGetAndSetExample())}`);
+console.log(`Result 2: ${JSON.stringify(generatorGetAndSetExample().next().value)}`);
+```
+
+Example console output of executed code:
+
+```js
+Result 1: {"value":{"snack":"crisps"},"expiry":"2017-04-18T08:15:19.087Z"}
+Result 2: {"value":{"snack":"chocolate"},"expiry":"2017-04-18T08:15:19.091Z"}
+```
+
+###API
+
+## Cacher
+
+# create
+
+# options
+ - clone:
+ - id:
+ - storeUndefinedObjects:
+ - ttl: (default: 0) forever
+
+# clone
+
+The following code turns off object cloning (default true)
+
+```js
+require('mem-cache')
+    .clone(false );
+```
+
+# storeUndefinedObjects
+
+The following code allows undefined objects to be stored in cache
+
+```js
+require('mem-cache')
+    .storeUndefinedItems(true);
+```
+
+# cleanup
+
+The following code forces expired objects to be removed from cache every 60 seconds.  By default no cleanup is performed.
+
+```js
+require('mem-cache')
+    .cleanup(60);
+```
+
+The example above forces objects to be cl
+
+## Cacher instance
+
 ## Usage
+
+Example usage below:
+
+```js
+'use strict';
+const cache = require('mem-cache').create();
+
+function * getData() {
+  return { snack: 'chocolate' };
+}
+
+function standardGetAndSetExample() {
+  const key = 'the_key1';
+  let result = cache.get(key);
+
+  if (!result) {
+    cache.set(key, { snack: 'crisps'});
+    result = cache.get(key);
+  }
+
+  return { value: result, expiry: cache.getExpiry(key) };
+}
+
+function * generatorGetAndSetExample() {
+  const key = 'the_key2';
+
+  let result = yield* cache.getAndSet(key, {
+    generator: function * () {
+      return yield* getData();
+    }
+  });
+
+  return { value: result, expiry: cache.getExpiry(key) };
+}
+
+console.log(`Result 1: ${JSON.stringify(standardGetAndSetExample())}`);
+console.log(`Result 2: ${JSON.stringify(generatorGetAndSetExample().next().value)}`);
+```
+
+When executing the above code the following will be printed.
+
+Result 1: {"value":{"snack":"crisps"},"expiry":"2017-04-18T08:00:52.325Z"}
+Result 2: {"value":{"snack":"chocolate"},"expiry":"2017-04-18T08:00:52.329Z"}
+
+
+
 
 Firstly the module will need to be initialized with schemes and there associated clients.  This only needs to be done once preferably on application start.
 

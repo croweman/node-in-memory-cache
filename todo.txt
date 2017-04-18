@@ -1,11 +1,5 @@
 
 
--- remove all old values on timeout
--- cloning
--- option to store undefined
-
-
-
 -- set default ttl across all
 
 -- what if want to get expiry time and value??
@@ -14,7 +8,12 @@
 
 fluent
 
-cache forever
+cache forever!!!!!!
+
+have publish .bat, that
+ - copies only production dependencies
+ - removes specs
+ - publishes to npm
 
 
 document everything

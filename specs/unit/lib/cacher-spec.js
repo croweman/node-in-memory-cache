@@ -1,7 +1,6 @@
 "use strict";
 const Cacher = require('../../../index');
 const Promise = require('bluebird');
-const uuid = require('uuid').v4;
 
 describe('cacher', () => {
 
@@ -11,10 +10,10 @@ describe('cacher', () => {
 
       it('correctly creates a new instance with no options (defaults)', () => {
         let cache = Cacher.create();
-        cache.id.length.should.equal(36);
-        cache.ttl.should.equal(300);
+        cache.id.length.should.equal(1);
+        cache.ttl.should.equal(0);
         cache.clone.should.equal(true);
-        cache.storeUndefinedItems.should.equal(false);
+        cache.storeUndefinedObjects.should.equal(false);
         Object.keys(cache.cachedData).length.should.equal(0);
       });
 
@@ -23,12 +22,12 @@ describe('cacher', () => {
           id: 'Blah',
           ttl: 600,
           clone: false,
-          storeUndefinedItems: true
+          storeUndefinedObjects: true
         });
         cache.id.should.equal('Blah');
         cache.ttl.should.equal(600);
         cache.clone.should.equal(false);
-        cache.storeUndefinedItems.should.equal(true);
+        cache.storeUndefinedObjects.should.equal(true);
         Object.keys(cache.cachedData).length.should.equal(0);
       });
     });
@@ -69,6 +68,37 @@ describe('cacher', () => {
         }, 1010);
       });
 
+      describe('clone enabled', () => {
+
+        it('when updating an object it does not update the in memory cache', () => {
+          const key = 'thekey';
+          let cache = Cacher
+            .create({ ttl: 60, clone: true });
+
+          let obj = { num: 1 };
+          cache.set(key, obj);
+          obj.num = 2;
+          let value = cache.get(key);
+          value.num.should.equal(1);
+        });
+      });
+
+      describe('clone disabled', () => {
+
+        it('when updating an object it updates the in memory cache', () => {
+          const key = 'thekey';
+          let cache = Cacher
+            .create({ ttl: 60, clone: false });
+
+          let obj = { num: 1 };
+          cache.set(key, obj);
+          obj.num = 2;
+          let value = cache.get(key);
+          value.num.should.equal(2);
+        });
+
+      });
+
     });
     
     describe('getExpiry', () => {
@@ -80,7 +110,7 @@ describe('cacher', () => {
         (!value).should.equal(true);
       });
 
-      it('returns the expiry if it exists in cache', () => {
+      it('returns the correct expiry if it exists in cache', () => {
 
         const key = 'thekey';
         let cache = Cacher.create({ ttl: 10 });
@@ -90,6 +120,15 @@ describe('cacher', () => {
         let expiryTime = expires.getTime();
         let expectedExpiryTime = d.getTime() + (10 * 1000);
         (expectedExpiryTime >= expiryTime - 1 && expectedExpiryTime <= expiryTime + 1).should.equal(true);
+      });
+
+      it('returns the correct expiry if it exists in cache and ttl was set to 0 (infinite)', () => {
+
+        const key = 'thekey';
+        let cache = Cacher.create({ ttl: 0 });
+        cache.set(key, {});
+        let expires = cache.getExpiry(key);
+        expires.getTime().should.equal(8640000000000000);
       });
 
       it('returns undefined if item in cache has expired', () => {
@@ -135,7 +174,7 @@ describe('cacher', () => {
         (!value).should.equal(true);
       })
 
-      describe('storeUndefinedItems option is false (default)', () => {
+      describe('storeUndefinedObjects option is false (default)', () => {
 
         it('does not store an object in cache if "undefined"', () => {
           const key = 'thekey';
@@ -187,11 +226,11 @@ describe('cacher', () => {
 
       });
 
-      describe('storeUndefinedItems option is true', () => {
+      describe('storeUndefinedObjects option is true', () => {
 
         it('does store an object in cache if "undefined"', () => {
           const key = 'thekey';
-          let cache = Cacher.create({ ttl: 10, storeUndefinedItems: true });
+          let cache = Cacher.create({ ttl: 10, storeUndefinedObjects: true });
           let value = cache.get(key);
           (!value).should.equal(true);
           cache.set(key, undefined);
@@ -203,7 +242,7 @@ describe('cacher', () => {
 
         it('does store an object in cache if "null"', () => {
           const key = 'thekey';
-          let cache = Cacher.create({ ttl: 10, storeUndefinedItems: true });
+          let cache = Cacher.create({ ttl: 10, storeUndefinedObjects: true });
           let value = cache.get(key);
           (!value).should.equal(true);
           cache.set(key, null);
@@ -215,7 +254,7 @@ describe('cacher', () => {
 
         it('does store an object in cache if it is defined and has an isNull function that returns true', () => {
           const key = 'thekey';
-          let cache = Cacher.create({ ttl: 10, storeUndefinedItems: true });
+          let cache = Cacher.create({ ttl: 10, storeUndefinedObjects: true });
           let value = cache.get(key);
           (!value).should.equal(true);
           cache.set(key, { isNull: () => { return true }});
@@ -227,7 +266,7 @@ describe('cacher', () => {
 
         it('does store an object in cache if it is defined and has an isNull function that returns false', () => {
           const key = 'thekey';
-          let cache = Cacher.create({ ttl: 10, storeUndefinedItems: true });
+          let cache = Cacher.create({ ttl: 10, storeUndefinedObjects: true });
           let value = cache.get(key);
           (!value).should.equal(true);
           cache.set(key, { isNull: () => { return false }});
@@ -279,11 +318,11 @@ describe('cacher', () => {
 
     describe('getAndSet', () => {
 
-      it('correctly retrieves and sets values in cache', (done) => {
+      it('correctly retrieves and sets values in cache when using generators', (done) => {
 
         function * test() {
           function * getData() {
-            return 'hello-world-' + uuid();
+            return 'hello-world-' + Math.random(0, 100);
           }
 
           const key = 'thekey';
@@ -397,7 +436,7 @@ describe('cacher', () => {
       Cacher.create({ ttl: 1, id: 'one' });
       Cacher.create({ ttl: 1, id: 'two' });
       Cacher.create({ ttl: 1, id: 'three' });
-      Cacher.cachers().length.should.equal(33);
+      Cacher.cachers().length.should.equal(37);
     });
 
   });
@@ -427,23 +466,23 @@ describe('cacher', () => {
         .create({ id: 'test' });
 
       cacher.id.should.equal('test');
-      cacher.ttl.should.equal(300);
+      cacher.ttl.should.equal(0);
       cacher.clone.should.equal(true);
-      cacher.storeUndefinedItems.should.equal(false);
+      cacher.storeUndefinedObjects.should.equal(false);
     });
 
     it('instantiates the object correctly with overriden defaults', () => {
       let cacher = Cacher
         .ttl(1234)
         .clone(false)
-        .storeUndefinedItems(true)
+        .storeUndefinedObjects(true)
         .cleanup(5)
         .create({ id: 'test' });
 
       cacher.id.should.equal('test');
       cacher.ttl.should.equal(1234);
       cacher.clone.should.equal(false);
-      cacher.storeUndefinedItems.should.equal(true);
+      cacher.storeUndefinedObjects.should.equal(true);
     });
 
   });
