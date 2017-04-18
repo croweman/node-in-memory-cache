@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/croweman/in-memory-cache.git"
+    "url": "git://github.com/croweman/node-in-memory-cache.git"
   },
   "description": "Node module for in memory caching",
   "main": "index.js",

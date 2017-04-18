@@ -1,6 +1,6 @@
-# mem-cache
+# cache-memory
 
-[![build status](https://travis-ci.org/croweman/in-memory-cache.svg)](https://travis-ci.org/croweman/in-memory-cache) [![npm version](https://badge.fury.io/js/in-memory-cache.svg)](https://www.npmjs.com/package/cache-memory)
+[![build status](https://travis-ci.org/croweman/node-in-memory-cache.svg)](https://travis-ci.org/croweman/node-in-memory-cache) [![npm version](https://badge.fury.io/js/node-in-memory-cache.svg)](https://www.npmjs.com/package/cache-memory)
 
 Node module for in memory caching.
 
