@@ -9,14 +9,14 @@ Node module for in memory caching.
 With [npm](http://npmjs.org) do
 
 ```bash
-$ npm install mem-cache --save
+$ npm install cache-memory --save
 ```
 
 ## Example usage
 
 ```js
 'use strict';
-const cache = require('mem-cache')
+const cache = require('cache-memory')
   .create({ ttl: 60});
 
 function * getData() {
@@ -65,7 +65,7 @@ Result 2: {"value":{"snack":"chocolate"},"expiry":"2017-04-18T08:15:19.091Z"}
 # create
 
 ```js
-let cacher = require('mem-cache')
+let cacher = require('cache-memory')
     .clone(false );
 ```
 
@@ -81,7 +81,7 @@ Creates a new cacher instance.
 # clone
 
 ```js
-require('mem-cache')
+require('cache-memory')
     .clone(false );
 ```
 
@@ -90,7 +90,7 @@ Turns off object cloning (default `true`).
 # storeUndefinedObjects
 
 ```js
-require('mem-cache')
+require('cache-memory')
     .storeUndefinedItems(true);
 ```
 
@@ -99,7 +99,7 @@ Allows undefined objects to be stored in cache (default `false`).
 # cleanup
 
 ```js
-require('mem-cache')
+require('cache-memory')
     .cleanup(60);
 ```
 
@@ -108,7 +108,7 @@ Forces expired objects to be removed from cache every `60` seconds.  By default 
 # clear
 
 ```js
-require('mem-cache').clear();
+require('cache-memory').clear();
 ```
 
 Clears the in memory cache of all active cache instances.
@@ -116,7 +116,7 @@ Clears the in memory cache of all active cache instances.
 # cachers
 
 ```js
-let cachers = require('mem-cache').cachers();
+let cachers = require('cache-memory').cachers();
 ```
 
 Gets all active cache instances.
@@ -124,7 +124,7 @@ Gets all active cache instances.
 # cacher
 
 ```js
-let cacher = require('mem-cache').cacher('snacks');
+let cacher = require('cache-memory').cacher('snacks');
 ```
 
 Gets an active cacher by it's id.
@@ -132,7 +132,7 @@ Gets an active cacher by it's id.
 # cachedItemsCount
 
 ```js
-let count = require('mem-cache').cachedItemsCount();
+let count = require('cache-memory').cachedItemsCount();
 ```
 
 Gets the total count of cached objects across all active cachers.
