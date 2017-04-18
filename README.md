@@ -16,7 +16,7 @@ With [npm](http://npmjs.org) do
 $ npm install mem-cache --save
 ```
 
-# Example usage
+## Example usage
 
 ```js
 'use strict';
@@ -62,9 +62,9 @@ Result 1: {"value":{"snack":"crisps"},"expiry":"2017-04-18T08:15:19.087Z"}
 Result 2: {"value":{"snack":"chocolate"},"expiry":"2017-04-18T08:15:19.091Z"}
 ```
 
-###API
+##API
 
-## Cacher
+## Cache
 
 # create
 
@@ -76,11 +76,11 @@ let cacher = require('mem-cache')
 Creates a new cacher instance.
 
 # options
- - clone: (default: true) Defines whether objects should be cloned when set in and retrieved from cache.
- - id: The id of the cacher (string value).
- - storeUndefinedObjects: (default: false) Defines whether undefined objects should be stored in memory.
- - ttl: (default: 0) Defines in seconds how long an object should be stored in memory.
-   0 = Forever
+ - `clone`: (default: `true`) Defines whether objects should be cloned when set in and retrieved from cache.
+ - `id`: The id of the cacher (string value).
+ - `storeUndefinedObjects`: (default: false) Defines whether undefined objects should be stored in memory.
+ - `ttl`: (default: `0`) Defines in seconds how long an object should be stored in memory.
+   `0` = Forever
 
 # clone
 
@@ -89,7 +89,7 @@ require('mem-cache')
     .clone(false );
 ```
 
-Turns off object cloning (default true)
+Turns off object cloning (default `true`).
 
 # storeUndefinedObjects
 
@@ -98,7 +98,7 @@ require('mem-cache')
     .storeUndefinedItems(true);
 ```
 
-Allows undefined objects to be stored in cache.
+Allows undefined objects to be stored in cache (default `false`).
 
 # cleanup
 
@@ -107,7 +107,7 @@ require('mem-cache')
     .cleanup(60);
 ```
 
-Forces expired objects to be removed from cache every 60 seconds.  By default no cleanup is performed.
+Forces expired objects to be removed from cache every `60` seconds.  By default `no cleanup` is performed.
 
 # clear
 
@@ -141,9 +141,9 @@ let count = require('mem-cache').cachedItemsCount();
 
 Gets the total count of cached objects across all active cachers.
 
-## Cacher instance
+## Cache instance
 
-#get
+# get
 
 ```js
 cache.get(key, [options]);
@@ -152,13 +152,13 @@ cache.get(key, [options]);
 Gets an object from cache, undefined will be returned if object does not exist.
 
 # options
- - clone: (default: true) Defines whether objects should be cloned when set in and retrieved from cache.
- - id: The id of the cacher (string value).
- - storeUndefinedObjects: (default: false) Defines whether undefined objects should be stored in memory.
- - ttl: (default: 0) Defines in seconds how long an object should be stored in memory.
-   0 = Forever
+ - `clone`: (default: `true`) Defines whether objects should be cloned when set in and retrieved from cache.
+ - `id`: The id of the cacher (string value).
+ - `storeUndefinedObjects`: (default: `false`) Defines whether undefined objects should be stored in memory.
+ - `ttl`: (default: `0`) Defines in seconds how long an object should be stored in memory.
+   `0` = Forever
 
-#getExpiry
+# getExpiry
 
 ```js
 cache.getExpiry(key);
@@ -166,7 +166,7 @@ cache.getExpiry(key);
 
 Gets the expiry DateTime of an object in cache, undefined is returned if object is not found.
 
-#set
+# set
 
 ```js
 cache.set(key, value, [options]);
@@ -175,9 +175,9 @@ cache.set(key, value, [options]);
 Stores an object in cache.
 
 # options
- - storeUndefinedObjects: (default: global or instance level definition) Defines whether undefined objects should be stored in memory.
- - ttl: (default: global or instance level definition) Defines in seconds how long an object should be stored in memory.
-   0 = Forever
+ - `storeUndefinedObjects`: (default: global or instance level definition) Defines whether undefined objects should be stored in memory.
+ - `ttl`: (default: global or instance level definition) Defines in seconds how long an object should be stored in memory.
+   `0` = Forever
 
 If 'storeUndefinedObjects' is false. undefined, null and objects with an IsNull function that returns true will not be stored.
 
@@ -187,13 +187,13 @@ If 'storeUndefinedObjects' is false. undefined, null and objects with an IsNull 
 cache.getAndSet(key, [options]);
 ```
 
-Gets and sets an object in cache.
+Gets and sets an object in cache.  The getAndSet function is a `generator` function so should be yielded or Promisied etc.
 
 # options
- - generator: A generator function that will be yielded to return the object value to store in cache.
- - storeUndefinedObjects: (default: global or instance level definition) Defines whether undefined objects should be stored in memory.
- - ttl: (default: global or instance level definition) Defines in seconds how long an object should be stored in memory.
-   0 = Forever
+ - `generator`: A generator function that will be yielded to return the object value to store in cache.
+ - `storeUndefinedObjects`: (default: global or instance level definition) Defines whether undefined objects should be stored in memory.
+ - `ttl`: (default: global or instance level definition) Defines in seconds how long an object should be stored in memory.
+   `0` = Forever
 
 # clear
 
