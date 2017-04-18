@@ -8,7 +8,7 @@
   "description": "Node module for in memory caching",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/istanbul test ./node_modules/mocha/bin/_mocha -- specs -R spec --recursive --timeout 2000"
+    "test": "node_modules/.bin/istanbul test ./node_modules/mocha/bin/_mocha -- specs -R spec --recursive --timeout 5000"
   },
   "contributors": [
     {

@@ -52,7 +52,7 @@ describe('cacher', () => {
         value.should.equal('cheese');
       });
 
-      it('does not return an item if cache has expired', () => {
+      it('does not return an item if cache has expired', (done) => {
 
         const key = 'thekey';
         let cache = Cacher.create({ ttl: 1 });
@@ -65,7 +65,8 @@ describe('cacher', () => {
         setTimeout(() => {
           let value = cache.get(key);
           (!value).should.equal(true);
-        }, 1010);
+          done();
+        }, 3000);
       });
 
       describe('clone enabled', () => {
@@ -131,7 +132,7 @@ describe('cacher', () => {
         expires.getTime().should.equal(8640000000000000);
       });
 
-      it('returns undefined if item in cache has expired', () => {
+      it('returns undefined if item in cache has expired', (done) => {
 
         const key = 'thekey';
         let cache = Cacher.create({ ttl: 1 });
@@ -142,7 +143,8 @@ describe('cacher', () => {
         setTimeout(() => {
           let expiry = cache.getExpiry(key);
           (!expiry).should.equal(true);
-        }, 1010);
+          done();
+        }, 3000);
       });
 
     });
@@ -454,7 +456,7 @@ describe('cacher', () => {
       setTimeout(() => {
         cache.keys().length.should.equal(0);
         done();
-      }, 1010);
+      }, 3000);
 
     });
   });
