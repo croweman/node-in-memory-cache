@@ -17,7 +17,10 @@ $ npm install cache-memory --save
 ```js
 'use strict';
 const cache = require('cache-memory')
-  .create({ ttl: 60});
+  .ttl(60)
+  .storeUndefinedObjects(false)
+  .cleanup(60)
+  .create({ id: 'snacks' });
 
 function * getData() {
   return { snack: 'chocolate' };
@@ -131,13 +134,27 @@ let cacher = require('cache-memory').cacher('snacks');
 
 Gets an active cacher by it's id.
 
-## cachedItemsCount
+## stats
 
 ```js
-let count = require('cache-memory').cachedItemsCount();
+let stats = require('cache-memory').stats();
 ```
 
-Gets the total count of cached objects across all active cachers.
+Gets an array of stats across all active cachers.
+
+```js
+[
+  {
+    id: '1',
+    stats: {
+      count: 5,
+      hits: 17123,
+      misses: 57,
+      hitRate: 0.9966821885913854
+    }
+  }
+]
+```
 
 ## Cache - created cache-memory instance
 It's functions are defined below.
@@ -210,13 +227,24 @@ cache.remove(key);
 
 Remove the object from cache.
 
-## cachedItemsCount
+## stats
 
 ```js
-cache.cachedItemsCount();
+cache.stats();
 ```
 
-Gets the number of objects stored in the cache instance.
+Gets the stats for the cache instance.
+
+Example return value:
+
+```js
+{
+  count: 5,
+  hits: 17123,
+  misses: 57,
+  hitRate: 0.9966821885913854
+}
+```
 
 ## keys
 
@@ -225,6 +253,24 @@ cache.keys();
 ```
 
 Gets all keys for objects stored in the cache instance.
+
+## options
+
+```js
+let options = cache.options();
+```
+
+Gets all configured options for a cache instance.
+
+Example return value:
+
+```js
+{
+  ttl: 60,
+  clone: true,
+  storeUndefinedObjects: false
+}
+```
 
 ## License
 

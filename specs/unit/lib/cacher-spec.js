@@ -11,10 +11,11 @@ describe('cacher', () => {
       it('correctly creates a new instance with no options (defaults)', () => {
         let cache = Cacher.create();
         cache.id.length.should.equal(1);
-        cache.ttl.should.equal(0);
-        cache.clone.should.equal(true);
-        cache.storeUndefinedObjects.should.equal(false);
-        Object.keys(cache.cachedData).length.should.equal(0);
+        let options = cache.options();
+        options.ttl.should.equal(0);
+        options.clone.should.equal(true);
+        options.storeUndefinedObjects.should.equal(false);
+        cache.stats().count.should.equal(0);
       });
 
       it('correctly creates a new instance with defined options', () => {
@@ -25,10 +26,11 @@ describe('cacher', () => {
           storeUndefinedObjects: true
         });
         cache.id.should.equal('Blah');
-        cache.ttl.should.equal(600);
-        cache.clone.should.equal(false);
-        cache.storeUndefinedObjects.should.equal(true);
-        Object.keys(cache.cachedData).length.should.equal(0);
+        let options = cache.options();
+        options.ttl.should.equal(600);
+        options.clone.should.equal(false);
+        options.storeUndefinedObjects.should.equal(true);
+        cache.stats().count.should.equal(0);
       });
     });
 
@@ -160,7 +162,7 @@ describe('cacher', () => {
         cache.set(key, 'peas');
         value = cache.get(key);
         value.should.equal('peas');
-        Cacher.cachedItemsCount().should.equal(1);
+        cache.stats().count.should.equal(1);
       });
 
       it('removes an object from cache, if item is now be set to an undefined value', () => {
@@ -345,18 +347,54 @@ describe('cacher', () => {
 
     });
 
-    describe('cachedItemsCount', () => {
+    describe('stats', () => {
 
-      it('returns the correct number of items in cache', () => {
+      it('returns the correct count of items', () => {
         let cache = Cacher.create({ ttl: 10 });
-        cache.cachedItemsCount().should.equal(0);
+        cache.stats().count.should.equal(0);
         cache.set('one', {});
-        cache.cachedItemsCount().should.equal(1);
+        cache.stats().count.should.equal(1);
         cache.set('one', {});
-        cache.cachedItemsCount().should.equal(1);
+        cache.stats().count.should.equal(1);
         cache.set('two', {});
-        cache.cachedItemsCount().should.equal(2);
+        cache.stats().count.should.equal(2);
       });
+
+      it('returns correct stats', () => {
+        let cache = Cacher.create({ttl: 10});
+        cache.get('a');
+        cache.get('b');
+        cache.get('c');
+
+        cache.set('d', {});
+        cache.get('d');
+
+        let stats = cache.stats();
+        stats.count.should.equal(1);
+        stats.hits.should.equal(1);
+        stats.misses.should.equal(3);
+        stats.hitRate.should.equal(0.25);
+
+        cache.clear();
+        stats = cache.stats();
+        stats.count.should.equal(0);
+        stats.hits.should.equal(0);
+        stats.misses.should.equal(0);
+        stats.hitRate.should.equal(0);
+
+        cache.get('a');
+        cache.set('a', {});
+        cache.get('a');
+        cache.get('a');
+        cache.get('a');
+
+        stats = cache.stats();
+        stats.count.should.equal(1);
+        stats.hits.should.equal(3);
+        stats.misses.should.equal(1);
+        stats.hitRate.should.equal(0.75);
+      });
+
     });
     
     describe('keys', () => {
@@ -385,28 +423,39 @@ describe('cacher', () => {
       let cache2 = Cacher.create({ ttl: 1 });
       cache2.set('one', {});
 
-      Cacher.cachedItemsCount().should.equal(2);
+      let count = 0;
+      Cacher.stats().forEach((cache) => {
+        count += cache.stats.count;
+      });
+
+      count.should.equal(2);
       Cacher.clear();
-      Cacher.cachedItemsCount().should.equal(0);
+
+      count = 0;
+      Cacher.stats().forEach((cache) => {
+        count += cache.stats.count;
+      });
+      count.should.equal(0);
     });
 
   });
 
-  describe('cachedItemsCount', () => {
+  describe('stats', () => {
 
     it('returns the total cached items count across all cacher instances in memory', () => {
 
-      let cache1 = Cacher.create({ ttl: 1 });
-      cache1.set('one', {});
-      let cache2 = Cacher.create({ ttl: 1 });
-      cache2.set('one', {});
-      cache2.set('two', {});
-      let cache3 = Cacher.create({ ttl: 1 });
-      cache3.set('one', {});
-      cache3.set('two', {});
-      cache3.set('three', {});
+      let cache = Cacher.cachers()[0];
+      cache.clear();
+      cache.set('one', {});
+      cache.get('one');
+      cache.get('two');
 
-      Cacher.cachedItemsCount().should.equal(6);
+      let stats = Cacher.stats();
+      (stats.length > 1).should.equal(true);
+      stats[0].stats.count.should.equal(1);
+      stats[0].stats.hits.should.equal(1);
+      stats[0].stats.misses.should.equal(1);
+      stats[0].stats.hitRate.should.equal(0.5);
     });
 
   });
@@ -438,7 +487,7 @@ describe('cacher', () => {
       Cacher.create({ ttl: 1, id: 'one' });
       Cacher.create({ ttl: 1, id: 'two' });
       Cacher.create({ ttl: 1, id: 'three' });
-      Cacher.cachers().length.should.equal(37);
+      Cacher.cachers().length.should.equal(34);
     });
 
   });
@@ -468,9 +517,10 @@ describe('cacher', () => {
         .create({ id: 'test' });
 
       cacher.id.should.equal('test');
-      cacher.ttl.should.equal(0);
-      cacher.clone.should.equal(true);
-      cacher.storeUndefinedObjects.should.equal(false);
+      let options = cacher.options();
+      options.ttl.should.equal(0);
+      options.clone.should.equal(true);
+      options.storeUndefinedObjects.should.equal(false);
     });
 
     it('instantiates the object correctly with overriden defaults', () => {
@@ -482,9 +532,10 @@ describe('cacher', () => {
         .create({ id: 'test' });
 
       cacher.id.should.equal('test');
-      cacher.ttl.should.equal(1234);
-      cacher.clone.should.equal(false);
-      cacher.storeUndefinedObjects.should.equal(true);
+      let options = cacher.options();
+      options.ttl.should.equal(1234);
+      options.clone.should.equal(false);
+      options.storeUndefinedObjects.should.equal(true);
     });
 
   });

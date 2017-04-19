@@ -42,15 +42,18 @@ var cacherWrapper = {
     });
     return cacherWrapper;
   },
-  cachedItemsCount: () => {
-    let count = 0;
+  stats: () => {
+    let stats = []
 
     getCachers().forEach((cacher) => {
-      count += Object.keys(cacher.cachedData).length;
+      stats.push({
+        id: cacher.id,
+        stats: cacher.stats()
+      });
     });
 
-    logger.log(`Total cached items count across all cachers - ${count}`);
-    return count;
+    logger.log(`Stats across all cachers - ${JSON.stringify(stats)}`);
+    return stats;
   },
   cacher: (id) => {
     let cacher = undefined;

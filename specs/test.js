@@ -1,7 +1,15 @@
+/*
 'use strict';
-//const cache = require('mem-cache').create();
+//const cache = require('cache-memory')
+// .ttl(60)
+// .storeUndefinedObjects(false)
+// .cleanup(60)
+// .create({ id: 'snacks' });
 const cache = require('../index')
-  .create({ ttl: 60});
+  .ttl(60)
+  .storeUndefinedObjects(false)
+  .cleanup(60)
+  .create({ id: 'snacks' });
 
 function * getData() {
   return { snack: 'chocolate' };
@@ -33,3 +41,4 @@ function * generatorGetAndSetExample() {
 
 console.log(`Result 1: ${JSON.stringify(standardGetAndSetExample())}`);
 console.log(`Result 2: ${JSON.stringify(generatorGetAndSetExample().next().value)}`);
+*/
