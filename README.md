@@ -16,6 +16,7 @@ $ npm install cache-memory --save
 
 ```js
 'use strict';
+
 const cache = require('cache-memory')
   .ttl(60)
   .storeUndefinedObjects(false)
@@ -71,7 +72,7 @@ Object is used to create cacher instances, default configuration variables and s
 
 ```js
 let cacher = require('cache-memory')
-    .clone(false );
+    .create([options]);
 ```
 
 Creates a new cacher instance.
@@ -87,7 +88,7 @@ Creates a new cacher instance.
 
 ```js
 require('cache-memory')
-    .clone(false );
+    .clone(false);
 ```
 
 Turns off object cloning (default `true`).
@@ -113,7 +114,8 @@ Forces expired objects to be removed from cache every `60` seconds.  By default 
 ## clear
 
 ```js
-require('cache-memory').clear();
+require('cache-memory')
+  .clear();
 ```
 
 Clears the in memory cache of all active cache instances.
@@ -162,7 +164,7 @@ It's functions are defined below.
 ## get
 
 ```js
-cache.get(key, [options]);
+let obj = cache.get(key, [options]);
 ```
 
 Gets an object from cache, undefined will be returned if object does not exist.
@@ -177,7 +179,7 @@ Gets an object from cache, undefined will be returned if object does not exist.
 ## getExpiry
 
 ```js
-cache.getExpiry(key);
+let expiry = cache.getExpiry(key);
 ```
 
 Gets the expiry DateTime of an object in cache, undefined is returned if object is not found.
@@ -230,7 +232,7 @@ Remove the object from cache.
 ## stats
 
 ```js
-cache.stats();
+let stats = cache.stats();
 ```
 
 Gets the stats for the cache instance.
@@ -249,7 +251,7 @@ Example return value:
 ## keys
 
 ```js
-cache.keys();
+let keys = cache.keys();
 ```
 
 Gets all keys for objects stored in the cache instance.
