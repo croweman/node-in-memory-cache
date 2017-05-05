@@ -43,6 +43,17 @@ describe('cacher', () => {
         (!value).should.equal(true);
       });
 
+      it('calls the miss callback if item does not exist in cache', () => {
+
+        let missArg = undefined;
+        function miss(arg) { missArg = arg; }
+        let cache = Cacher.create({ ttl: 10, miss: miss });
+        let value = cache.get('key');
+        (!value).should.equal(true);
+        missArg.id.should.equal('3');
+        missArg.key.should.equal('key');
+      });
+
       it('returns an item if it exists in cache', () => {
 
         const key = 'thekey';
@@ -52,6 +63,21 @@ describe('cacher', () => {
         cache.set(key, 'cheese');
         value = cache.get(key);
         value.should.equal('cheese');
+      });
+
+      it('calls the hit callback an item if it exists in cache', () => {
+
+        let hitArg = undefined;
+        function hit(arg) { hitArg = arg; }
+        const key = 'thekey';
+        let cache = Cacher.create({ ttl: 10, hit: hit });
+        let value = cache.get(key);
+        (!value).should.equal(true);
+        cache.set(key, 'cheese');
+        value = cache.get(key);
+        value.should.equal('cheese');
+        hitArg.id.should.equal('5');
+        hitArg.key.should.equal('thekey');
       });
 
       it('does not return an item if cache has expired', (done) => {
@@ -149,6 +175,27 @@ describe('cacher', () => {
         }, 3000);
       });
 
+      it('calls the removed callback if the items has expired', (done) => {
+
+        let removedArg = undefined;
+        function removed(arg) { removedArg = arg; }
+
+        const key = 'thekey';
+        let cache = Cacher.create({ ttl: 1, removed: removed });
+        cache.set(key, 'cheese');
+        let value = cache.get(key);
+        value.should.equal('cheese');
+
+        setTimeout(() => {
+          let expiry = cache.getExpiry(key);
+          (!expiry).should.equal(true);
+          
+          removedArg.id.should.equal('13');
+          removedArg.key.should.equal('thekey');
+          done();
+        }, 3000);
+      });
+
     });
 
     describe('set', () => {
@@ -163,6 +210,22 @@ describe('cacher', () => {
         value = cache.get(key);
         value.should.equal('peas');
         cache.stats().count.should.equal(1);
+      });
+
+      it('calls the added callback', () => {
+
+        let addedArg = undefined;
+        function added(arg) { addedArg = arg; }
+        const key = 'thekey';
+        let cache = Cacher.create({ ttl: 10, added: added });
+        let value = cache.get(key);
+        (!value).should.equal(true);
+        cache.set(key, 'peas');
+        value = cache.get(key);
+        value.should.equal('peas');
+        cache.stats().count.should.equal(1);
+        addedArg.id.should.equal('15');
+        addedArg.key.should.equal('thekey');
       });
 
       it('removes an object from cache, if item is now be set to an undefined value', () => {
@@ -487,7 +550,7 @@ describe('cacher', () => {
       Cacher.create({ ttl: 1, id: 'one' });
       Cacher.create({ ttl: 1, id: 'two' });
       Cacher.create({ ttl: 1, id: 'three' });
-      Cacher.cachers().length.should.equal(34);
+      Cacher.cachers().length.should.equal(38);
     });
 
   });
