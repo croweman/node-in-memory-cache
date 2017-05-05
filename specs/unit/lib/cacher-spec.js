@@ -175,13 +175,15 @@ describe('cacher', () => {
         }, 3000);
       });
 
-      it('calls the removed callback if the items has expired', (done) => {
+      it('calls the removed and count callback if the items has expired', (done) => {
 
         let removedArg = undefined;
+        let countArg = undefined;
         function removed(arg) { removedArg = arg; }
+        function count(arg) { countArg = arg; }
 
         const key = 'thekey';
-        let cache = Cacher.create({ ttl: 1, removed: removed });
+        let cache = Cacher.create({ ttl: 1, removed: removed, count: count });
         cache.set(key, 'cheese');
         let value = cache.get(key);
         value.should.equal('cheese');
@@ -192,6 +194,8 @@ describe('cacher', () => {
           
           removedArg.id.should.equal('13');
           removedArg.key.should.equal('thekey');
+          countArg.id.should.equal('13');
+          countArg.count.should.equal(0);
           done();
         }, 3000);
       });
@@ -212,12 +216,14 @@ describe('cacher', () => {
         cache.stats().count.should.equal(1);
       });
 
-      it('calls the added callback', () => {
+      it('calls the added and count callback', () => {
 
         let addedArg = undefined;
+        let countArg = undefined;
         function added(arg) { addedArg = arg; }
+        function count(arg) { countArg = arg; }
         const key = 'thekey';
-        let cache = Cacher.create({ ttl: 10, added: added });
+        let cache = Cacher.create({ ttl: 10, added: added, count: count });
         let value = cache.get(key);
         (!value).should.equal(true);
         cache.set(key, 'peas');
@@ -226,6 +232,8 @@ describe('cacher', () => {
         cache.stats().count.should.equal(1);
         addedArg.id.should.equal('15');
         addedArg.key.should.equal('thekey');
+        countArg.id.should.equal('15');
+        countArg.count.should.equal(1);
       });
 
       it('removes an object from cache, if item is now be set to an undefined value', () => {
