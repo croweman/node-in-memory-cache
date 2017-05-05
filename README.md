@@ -89,15 +89,22 @@ Creates a new cacher instance.
  - `removed`: Function called every time an object is removed from cache.
  - `count`: Function called every time an object is added or removed from cache.
 
-** hit, miss, added, removed and count functions are all called with the following object structure.
+** hit, miss, added, removed functions are all called with the following object structure.
 
 ```js
 {
   id: 'some-id',
-  key: 'some-key',
-  count: 123 // only on count callback
+  key: 'some-key'
 }
 ```
+
+** count function is called with the following object structure.
+
+```js
+{
+  id: 'some-id',
+  count: 123
+}
 
 ## clone
 
