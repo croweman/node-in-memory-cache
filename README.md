@@ -105,6 +105,7 @@ Creates a new cacher instance.
   id: 'some-id',
   count: 123
 }
+```
 
 ## clone
 
@@ -220,6 +221,7 @@ Gets an object from cache, undefined will be returned if object does not exist.
   id: 'some-id',
   count: 123
 }
+```
 
 ## getExpiry
 
