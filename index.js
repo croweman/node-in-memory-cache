@@ -7,7 +7,7 @@ var cachers = [];
 var defaultTtl = 0;
 var defaultClone = true;
 var defaultStoreUndefinedObjects = false;
-var timeoutId;
+var intervalId;
 
 function getCachers() {
   cachers = cachers.filter((cacher) => { return cacher !== undefined && cacher !== null });
@@ -96,11 +96,11 @@ var cacherWrapper = {
     return cacherWrapper;
   },
   cleanup: (seconds) => {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
+    if (intervalId) {
+      clearInterval(intervalId);
     }
 
-    timeoutId = setTimeout(() => {
+    intervalId = setInterval(() => {
       logger.log(`cleaning up expired keys`);
       let count = 0;
       getCachers().forEach((cacher) => {
