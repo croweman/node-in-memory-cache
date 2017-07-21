@@ -246,10 +246,35 @@ Stores an object in cache.
 
 If 'storeUndefinedObjects' is false. undefined, null and objects with an IsNull function that returns true will not be stored.
 
-## * getAndSet
+## getAndSet v2.*
+
+Version 2.* of the modules getAndSet function is an `async` function
+
+### async getAndSet
 
 ```js
-cache.getAndSet(key, [options]);
+async function getter() {
+  return 'hello-world-' + Math.random(0, 100);
+}
+
+await cache.getAndSet(key, getter, [options]);
+```
+
+Gets and sets an object in cache.  The getAndSet function is a `generator` function so should be yielded or Promisified etc.
+
+### options
+ - `storeUndefinedObjects`: (default: global or instance level definition) Defines whether undefined objects should be stored in memory.
+ - `ttl`: (default: global or instance level definition) Defines in seconds how long an object should be stored in memory.
+   `0` = Forever
+
+## getAndSet v1.*
+
+Version 1.* of the modules getAndSet function is a `generator` function
+
+### * getAndSet
+
+```js
+yield* cache.getAndSet(key, [options]);
 ```
 
 Gets and sets an object in cache.  The getAndSet function is a `generator` function so should be yielded or Promisified etc.
