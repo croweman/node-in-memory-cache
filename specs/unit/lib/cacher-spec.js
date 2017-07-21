@@ -405,9 +405,7 @@ describe('cacher', () => {
           let value = cache.get(key);
           (!value).should.equal(true);
 
-          console.log('1')
           value = await cache.getAndSet(key, getData, {});
-          console.log('2')
           value.startsWith('hello-world').should.equal(true);
           let value2 = await cache.getAndSet(key, getData, {});
           value2.should.equal(value);
