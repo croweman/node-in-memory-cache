@@ -6,10 +6,19 @@ Node module for in memory caching.
 
 ## Installation
 
-With [npm](http://npmjs.org) do
+With [npm](http://npmjs.org)
+
+
+If using a node version that supports async/await do
 
 ```bash
 $ npm install cache-memory --save
+```
+
+Otherwise do
+
+```bash
+$ npm install cache-memory@1.0.10 --save
 ```
 
 ## Example usage
