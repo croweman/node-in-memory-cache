@@ -9,7 +9,7 @@ Node module for in memory caching.
 With [npm](http://npmjs.org)
 
 
-If using a node version that supports async/await do
+If using a node version that supports `async/await` do
 
 ```bash
 $ npm install cache-memory --save
@@ -18,7 +18,7 @@ $ npm install cache-memory --save
 Otherwise do
 
 ```bash
-$ npm install cache-memory@2.1.1 --save
+$ npm install cache-memory@1.0.11 --save
 ```
 
 ## Example usage
