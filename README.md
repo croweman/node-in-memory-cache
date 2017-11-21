@@ -190,6 +190,15 @@ Gets an array of stats across all active cachers.
 ]
 ```
 
+## dispose
+
+```js
+require('cache-memory').dispose();
+```
+
+Clears all in memory cacher instances and also clears the cleanup task if defined using the `cleanup` function.
+
+
 ## Cache - created cache-memory instance
 
 It's functions are defined below.

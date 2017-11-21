@@ -610,4 +610,24 @@ describe('cacher', () => {
 
   });
 
+  describe('dispose', () => {
+
+    it('disposes of all cachers', () => {
+      Cacher.create({ ttl: 1, id: 'one' });
+      Cacher.create({ ttl: 1, id: 'two' });
+      Cacher.create({ ttl: 1, id: 'three' });
+      Cacher.cachers().length.should.equal(44);
+
+      let intervalId = Cacher.getCleanupIntervalId();
+      (intervalId !== undefined).should.be.true;
+
+      Cacher.dispose();
+
+      Cacher.cachers().length.should.equal(0);
+      intervalId = Cacher.getCleanupIntervalId();
+      (intervalId === undefined).should.be.true;
+    });
+
+  });
+
 });

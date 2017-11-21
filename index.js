@@ -14,6 +14,13 @@ function getCachers() {
   return cachers;
 }
 
+function clearCachers() {
+  getCachers().forEach((cacher) => {
+    cacher.clear();
+    logger.log(`cleared cacher - id: ${cacher.id}`);
+  });
+}
+
 var cacherWrapper = {
   create: (options) => {
     options = options || {};
@@ -36,10 +43,7 @@ var cacherWrapper = {
     return cacher;
   },
   clear: () => {
-    getCachers().forEach((cacher) => {
-      cacher.clear();
-      logger.log(`cleared cacher - id: ${cacher.id}`);
-    });
+    clearCachers();
     return cacherWrapper;
   },
   stats: () => {
@@ -111,6 +115,18 @@ var cacherWrapper = {
       logger.log(`cleaning up expired keys complete - ${count} keys`);
     }, seconds * 1000);
     return cacherWrapper;
+  },
+  dispose: () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      intervalId = undefined;
+    }
+
+    clearCachers();
+    cachers = [];
+  },
+  getCleanupIntervalId: () => {
+    return intervalId;
   }
 };
 
