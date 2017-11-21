@@ -393,10 +393,10 @@ describe('cacher', () => {
 
     describe('getAndSet', () => {
 
-      it('correctly retrieves and sets values in cache when using generators', (done) => {
+      it('correctly retrieves and sets values in cache when using async getter', (done) => {
 
-        function * test() {
-          function * getData() {
+        async function test() {
+          async function getData() {
             return 'hello-world-' + Math.random(0, 100);
           }
 
@@ -405,15 +405,16 @@ describe('cacher', () => {
           let value = cache.get(key);
           (!value).should.equal(true);
 
-          value = yield* cache.getAndSet(key, { generator: getData });
+          console.log('1')
+          value = await cache.getAndSet(key, getData, {});
+          console.log('2')
           value.startsWith('hello-world').should.equal(true);
-          let value2 = yield* cache.getAndSet(key, { generator: getData });
+          let value2 = await cache.getAndSet(key, getData, {});
           value2.should.equal(value);
+          done();
         }
 
-        Promise.coroutine(test)()
-          .then(() => { done(); })
-          .catch((err) => { done(err); });
+        test();
       });
 
     });
