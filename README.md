@@ -18,7 +18,7 @@ $ npm install cache-memory --save
 Otherwise do
 
 ```bash
-$ npm install cache-memory@1.0.10 --save
+$ npm install cache-memory@2.1.1 --save
 ```
 
 ## Example usage
