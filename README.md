@@ -1,7 +1,7 @@
 # cache-memory
 
 [![build status](https://travis-ci.org/croweman/node-in-memory-cache.svg)](https://travis-ci.org/croweman/node-in-memory-cache) [![npm version](https://badge.fury.io/js/cache-memory.svg)](https://www.npmjs.com/package/cache-memory)
-[![cheese](https://helper-service-product.test.ctmers.io/generate-service-version-svg/Production?versionEndpoint=Nno0U3pRRXl3RlBhNGQ0SjI4NHI4d21TWkNWM2Rwd0x6eG5zSzE3MXZjb2doeFJxMUZQNXVmZzJkcWkxc255cTJiSjVOY1BzZW8vMW44UjFOc0pzRUc3c1VLZWEzQ1F5dllZQlRDYzhpdEU9)]()
+[![cheese](https://helper-service-product.prod.ctmers.io/generate-service-version-svg/Production?versionEndpoint=Nno0U3pRRXl3RlBhNGQ0SjI4NHI4d21TWkNWM2Rwd0x6eG5zSzE3MXZjb2doeFJxMUZQNXVmZzJkcWkxc255cTJiSjVOY1BzZW8vMW44UjFOc0pzRUc3c1VLZWEzQ1F5dllZQlRDYzhpdEU9)]()
 Node module for in memory caching.
 
 ## Installation
