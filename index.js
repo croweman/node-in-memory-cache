@@ -37,6 +37,10 @@ var cacherWrapper = {
       options.storeUndefinedObjects = defaultStoreUndefinedObjects;
     }
 
+    if (options.logDebugMessages) {
+      logger.enableDebugging = true;
+    }
+
     let cacher = new Cacher(options);
     cachers.push(cacher);
     logger.log(`created new cacher - id: ${cacher.id}`);
@@ -56,7 +60,7 @@ var cacherWrapper = {
       });
     });
 
-    logger.log(`Stats across all cachers - ${JSON.stringify(stats)}`);
+    logger.log('Stats across all cachers');
     return stats;
   },
   cacher: (id) => {
@@ -77,7 +81,7 @@ var cacherWrapper = {
   cachers: () => {
     let cachers = getCachers();
     let ids = cachers.map((cacher) => { return cacher.id; });
-    logger.log(`getting cachers - ids: ${JSON.stringify(ids)} }`);
+    logger.log('getting cachers - ids', { ids });
     return cachers;
   },
   ttl: (ttl) => {
