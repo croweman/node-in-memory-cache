@@ -97,7 +97,6 @@ Creates a new cacher instance.
  - `added`: Function called every time an object is added to cache.
  - `removed`: Function called every time an object is removed from cache.
  - `count`: Function called every time an object is added or removed from cache.
- - `logDebugMessages`: logs debug messages if set to true
 
 ** hit, miss, added, removed functions are all called with the following object structure.
 
