@@ -1,0 +1,7 @@
+lib/
+specs/
+node_modules/
+jest.config.js
+tsconfig.json
+.travis.yml
+TODO.txt

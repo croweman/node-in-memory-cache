@@ -1,6 +1,4 @@
-"use strict";
-const Cacher = require('../../../index');
-const Promise = require('bluebird');
+import Cacher from '../../../index';
 
 describe('cacher', () => {
 
@@ -10,12 +8,12 @@ describe('cacher', () => {
 
       it('correctly creates a new instance with no options (defaults)', () => {
         let cache = Cacher.create();
-        cache.id.length.should.equal(1);
+        expect(cache.id.length).toEqual(1);
         let options = cache.options();
-        options.ttl.should.equal(0);
-        options.clone.should.equal(true);
-        options.storeUndefinedObjects.should.equal(false);
-        cache.stats().count.should.equal(0);
+        expect(options.ttl).toEqual(0);
+        expect(options.clone).toEqual(true);
+        expect(options.storeUndefinedObjects).toEqual(false);
+        expect(cache.stats().count).toEqual(0);
       });
 
       it('correctly creates a new instance with defined options', () => {
@@ -25,59 +23,55 @@ describe('cacher', () => {
           clone: false,
           storeUndefinedObjects: true
         });
-        cache.id.should.equal('Blah');
+        expect(cache.id).toEqual('Blah');
         let options = cache.options();
-        options.ttl.should.equal(600);
-        options.clone.should.equal(false);
-        options.storeUndefinedObjects.should.equal(true);
-        cache.stats().count.should.equal(0);
+        expect(options.ttl).toEqual(600);
+        expect(options.clone).toEqual(false);
+        expect(options.storeUndefinedObjects).toEqual(true);
+        expect(cache.stats().count).toEqual(0);
       });
     });
 
     describe('get', () => {
 
       it('returns undefined if item does not exist in cache', () => {
-
         let cache = Cacher.create({ ttl: 10 });
         let value = cache.get('key');
-        (!value).should.equal(true);
+        expect((!value)).toEqual(true);
       });
 
       it('calls the miss callback if item does not exist in cache', () => {
-
         let missArg = undefined;
         function miss(arg) { missArg = arg; }
         let cache = Cacher.create({ ttl: 10, miss: miss });
         let value = cache.get('key');
-        (!value).should.equal(true);
-        missArg.id.should.equal('3');
-        missArg.key.should.equal('key');
+        expect((!value)).toEqual(true);
+        expect(missArg.id).toEqual('3');
+        expect(missArg.key).toEqual('key');
       });
 
       it('returns an item if it exists in cache', () => {
-
         const key = 'thekey';
         let cache = Cacher.create({ ttl: 10 });
         let value = cache.get(key);
-        (!value).should.equal(true);
+        expect(!value).toEqual(true);
         cache.set(key, 'cheese');
         value = cache.get(key);
-        value.should.equal('cheese');
+        expect(value).toEqual('cheese');
       });
 
       it('calls the hit callback an item if it exists in cache', () => {
-
         let hitArg = undefined;
         function hit(arg) { hitArg = arg; }
         const key = 'thekey';
         let cache = Cacher.create({ ttl: 10, hit: hit });
         let value = cache.get(key);
-        (!value).should.equal(true);
+        expect(!value).toEqual(true);
         cache.set(key, 'cheese');
         value = cache.get(key);
-        value.should.equal('cheese');
-        hitArg.id.should.equal('5');
-        hitArg.key.should.equal('thekey');
+        expect(value).toEqual('cheese');
+        expect(hitArg.id).toEqual('5');
+        expect(hitArg.key).toEqual('thekey');
       });
 
       it('does not return an item if cache has expired', (done) => {
@@ -85,14 +79,14 @@ describe('cacher', () => {
         const key = 'thekey';
         let cache = Cacher.create({ ttl: 1 });
         let value = cache.get(key);
-        (!value).should.equal(true);
+        expect(!value).toEqual(true);
         cache.set(key, 'cheese');
         value = cache.get(key);
-        value.should.equal('cheese');
+        expect(value).toEqual('cheese');
 
         setTimeout(() => {
           let value = cache.get(key);
-          (!value).should.equal(true);
+          expect(!value).toEqual(true);
           done();
         }, 3000);
       });
@@ -108,7 +102,7 @@ describe('cacher', () => {
           cache.set(key, obj);
           obj.num = 2;
           let value = cache.get(key);
-          value.num.should.equal(1);
+          expect(value.num).toEqual(1);
         });
       });
 
@@ -123,7 +117,7 @@ describe('cacher', () => {
           cache.set(key, obj);
           obj.num = 2;
           let value = cache.get(key);
-          value.num.should.equal(2);
+          expect(value.num).toEqual(2);
         });
 
       });
@@ -133,14 +127,12 @@ describe('cacher', () => {
     describe('getExpiry', () => {
 
       it('returns undefined if item does not exist in cache', () => {
-
         let cache = Cacher.create({ ttl: 10 });
         let value = cache.getExpiry('key');
-        (!value).should.equal(true);
+        expect(!value).toEqual(true);
       });
 
       it('returns the correct expiry if it exists in cache', () => {
-
         const key = 'thekey';
         let cache = Cacher.create({ ttl: 10 });
         let d = new Date();
@@ -148,35 +140,32 @@ describe('cacher', () => {
         let expires = cache.getExpiry(key);
         let expiryTime = expires.getTime();
         let expectedExpiryTime = d.getTime() + (10 * 1000);
-        (expectedExpiryTime >= expiryTime - 1 && expectedExpiryTime <= expiryTime + 1).should.equal(true);
+        expect(expectedExpiryTime >= expiryTime - 1 && expectedExpiryTime <= expiryTime + 1).toEqual(true);
       });
 
       it('returns the correct expiry if it exists in cache and ttl was set to 0 (infinite)', () => {
-
         const key = 'thekey';
         let cache = Cacher.create({ ttl: 0 });
         cache.set(key, {});
         let expires = cache.getExpiry(key);
-        expires.getTime().should.equal(8640000000000000);
+        expect(expires.getTime()).toEqual(8640000000000000);
       });
 
       it('returns undefined if item in cache has expired', (done) => {
-
         const key = 'thekey';
         let cache = Cacher.create({ ttl: 1 });
         cache.set(key, 'cheese');
         let value = cache.get(key);
-        value.should.equal('cheese');
+        expect(value).toEqual('cheese');
 
         setTimeout(() => {
           let expiry = cache.getExpiry(key);
-          (!expiry).should.equal(true);
+          expect(!expiry).toEqual(true);
           done();
         }, 3000);
       });
 
       it('calls the removed and count callback if the items has expired', (done) => {
-
         let removedArg = undefined;
         let countArg = undefined;
         function removed(arg) { removedArg = arg; }
@@ -186,38 +175,35 @@ describe('cacher', () => {
         let cache = Cacher.create({ ttl: 1, removed: removed, count: count });
         cache.set(key, 'cheese');
         let value = cache.get(key);
-        value.should.equal('cheese');
+        expect(value).toEqual('cheese');
 
         setTimeout(() => {
           let expiry = cache.getExpiry(key);
-          (!expiry).should.equal(true);
-          
-          removedArg.id.should.equal('13');
-          removedArg.key.should.equal('thekey');
-          countArg.id.should.equal('13');
-          countArg.count.should.equal(0);
+          expect(!expiry).toEqual(true);
+
+          expect(removedArg.id).toEqual('13');
+          expect(removedArg.key).toEqual('thekey');
+          expect(countArg.id).toEqual('13');
+          expect(countArg.count).toEqual(0);
           done();
         }, 3000);
       });
-
     });
 
     describe('set', () => {
 
       it('stores an object in cache', () => {
-
         const key = 'thekey';
         let cache = Cacher.create({ ttl: 10 });
         let value = cache.get(key);
-        (!value).should.equal(true);
+        expect(!value).toEqual(true);
         cache.set(key, 'peas');
         value = cache.get(key);
-        value.should.equal('peas');
-        cache.stats().count.should.equal(1);
+        expect(value).toEqual('peas');
+        expect(cache.stats().count).toEqual(1);
       });
 
       it('calls the added and count callback', () => {
-
         let addedArg = undefined;
         let countArg = undefined;
         function added(arg) { addedArg = arg; }
@@ -225,28 +211,28 @@ describe('cacher', () => {
         const key = 'thekey';
         let cache = Cacher.create({ ttl: 10, added: added, count: count });
         let value = cache.get(key);
-        (!value).should.equal(true);
+        expect(!value).toEqual(true);
         cache.set(key, 'peas');
         value = cache.get(key);
-        value.should.equal('peas');
-        cache.stats().count.should.equal(1);
-        addedArg.id.should.equal('15');
-        addedArg.key.should.equal('thekey');
-        countArg.id.should.equal('15');
-        countArg.count.should.equal(1);
+        expect(value).toEqual('peas');
+        expect(cache.stats().count).toEqual(1);
+        expect(addedArg.id).toEqual('15');
+        expect(addedArg.key).toEqual('thekey');
+        expect(countArg.id).toEqual('15');
+        expect(countArg.count).toEqual(1);
       });
 
       it('removes an object from cache, if item is now be set to an undefined value', () => {
         const key = 'thekey';
         let cache = Cacher.create({ ttl: 10 });
         let value = cache.get(key);
-        (!value).should.equal(true);
+        expect(!value).toEqual(true);
         cache.set(key, {});
         value = cache.get(key);
-        (value !== undefined).should.equal(true);
+        expect(value !== undefined).toEqual(true);
         cache.set(key, undefined);
         value = cache.get(key);
-        (!value).should.equal(true);
+        expect(!value).toEqual(true);
       })
 
       describe('storeUndefinedObjects option is false (default)', () => {
@@ -255,50 +241,49 @@ describe('cacher', () => {
           const key = 'thekey';
           let cache = Cacher.create({ ttl: 10 });
           let value = cache.get(key);
-          (!value).should.equal(true);
+          expect(!value).toEqual(true);
           cache.set(key, undefined);
           value = cache.get(key);
-          (!value).should.equal(true);
+          expect(!value).toEqual(true);
           let expiry = cache.getExpiry(key);
-          (expiry === undefined).should.equal(true);
+          expect(expiry === undefined).toEqual(true);
         });
 
         it('does not store an object in cache if "null"', () => {
           const key = 'thekey';
           let cache = Cacher.create({ ttl: 10 });
           let value = cache.get(key);
-          (!value).should.equal(true);
+          expect(!value).toEqual(true);
           cache.set(key, null);
           value = cache.get(key);
-          (!value).should.equal(true);
+          expect(!value).toEqual(true);
           let expiry = cache.getExpiry(key);
-          (expiry === undefined).should.equal(true);
+          expect(expiry === undefined).toEqual(true);
         });
 
         it('does not store an object in cache if it is defined and has an isNull function that returns true', () => {
           const key = 'thekey';
           let cache = Cacher.create({ ttl: 10 });
           let value = cache.get(key);
-          (!value).should.equal(true);
+          expect(!value).toEqual(true);
           cache.set(key, { isNull: () => { return true }});
           value = cache.get(key);
-          (!value).should.equal(true);
+          expect(!value).toEqual(true);
           let expiry = cache.getExpiry(key);
-          (expiry === undefined).should.equal(true);
+          expect(expiry === undefined).toEqual(true);
         });
 
         it('does store an object in cache if it is defined and has an isNull function that returns false', () => {
           const key = 'thekey';
           let cache = Cacher.create({ ttl: 10 });
           let value = cache.get(key);
-          (!value).should.equal(true);
+          expect(!value).toEqual(true);
           cache.set(key, { isNull: () => { return false }});
           value = cache.get(key);
-          (value !== undefined).should.equal(true);
+          expect(value !== undefined).toEqual(true);
           let expiry = cache.getExpiry(key);
-          (expiry !== undefined).should.equal(true);
+          expect(expiry !== undefined).toEqual(true);
         });
-
       });
 
       describe('storeUndefinedObjects option is true', () => {
@@ -307,48 +292,48 @@ describe('cacher', () => {
           const key = 'thekey';
           let cache = Cacher.create({ ttl: 10, storeUndefinedObjects: true });
           let value = cache.get(key);
-          (!value).should.equal(true);
+          expect(!value).toEqual(true);
           cache.set(key, undefined);
           value = cache.get(key);
-          (!value).should.equal(true);
+          expect(!value).toEqual(true);
           let expiry = cache.getExpiry(key);
-          (expiry !== undefined).should.equal(true);
+          expect(expiry !== undefined).toEqual(true);
         });
 
         it('does store an object in cache if "null"', () => {
           const key = 'thekey';
           let cache = Cacher.create({ ttl: 10, storeUndefinedObjects: true });
           let value = cache.get(key);
-          (!value).should.equal(true);
+          expect(!value).toEqual(true);
           cache.set(key, null);
           value = cache.get(key);
-          (!value).should.equal(true);
+          expect(!value).toEqual(true);
           let expiry = cache.getExpiry(key);
-          (expiry !== undefined).should.equal(true);
+          expect(expiry !== undefined).toEqual(true);
         });
 
         it('does store an object in cache if it is defined and has an isNull function that returns true', () => {
           const key = 'thekey';
           let cache = Cacher.create({ ttl: 10, storeUndefinedObjects: true });
           let value = cache.get(key);
-          (!value).should.equal(true);
+          expect(!value).toEqual(true);
           cache.set(key, { isNull: () => { return true }});
           value = cache.get(key);
-          (value !== undefined).should.equal(true);
+          expect(value !== undefined).toEqual(true);
           let expiry = cache.getExpiry(key);
-          (expiry !== undefined).should.equal(true);
+          expect(expiry !== undefined).toEqual(true);
         });
 
         it('does store an object in cache if it is defined and has an isNull function that returns false', () => {
           const key = 'thekey';
           let cache = Cacher.create({ ttl: 10, storeUndefinedObjects: true });
           let value = cache.get(key);
-          (!value).should.equal(true);
+          expect(!value).toEqual(true);
           cache.set(key, { isNull: () => { return false }});
           let expiry = cache.getExpiry(key);
-          (expiry !== undefined).should.equal(true);
+          expect(expiry !== undefined).toEqual(true);
           value = cache.get(key);
-          (typeof value.isNull).should.equal('function');
+          expect(typeof value.isNull).toEqual('function');
         });
 
       });
@@ -358,17 +343,16 @@ describe('cacher', () => {
     describe('clear', () => {
 
       it('removes all items from cache', () => {
-
         const key1 = 'thekey';
         const key2 = 'thekey2';
         let cache = Cacher.create({ ttl: 10 });
         cache.set(key1, 'cheese');
         cache.set(key2, 'peas');
-        cache.get(key1).should.equal('cheese');
-        cache.get(key2).should.equal('peas');
+        expect(cache.get(key1)).toEqual('cheese');
+        expect(cache.get(key2)).toEqual('peas');
         cache.clear();
-        (!cache.get(key1)).should.equal(true);
-        (!cache.get(key2)).should.equal(true);
+        expect(!cache.get(key1)).toEqual(true);
+        expect(!cache.get(key2)).toEqual(true);
       });
 
     });
@@ -376,17 +360,16 @@ describe('cacher', () => {
     describe('remove', () => {
 
       it('removes an item from cache', () => {
-
         const key1 = 'thekey';
         const key2 = 'thekey2';
         let cache = Cacher.create({ ttl: 10 });
         cache.set(key1, 'cheese');
         cache.set(key2, 'peas');
-        cache.get(key1).should.equal('cheese');
-        cache.get(key2).should.equal('peas');
+        expect(cache.get(key1)).toEqual('cheese');
+        expect(cache.get(key2)).toEqual('peas');
         cache.remove(key1);
-        (!cache.get(key1)).should.equal(true);
-        cache.get(key2).should.equal('peas');
+        expect(!cache.get(key1)).toEqual(true);
+        expect(cache.get(key2)).toEqual('peas');
       });
 
     });
@@ -394,20 +377,20 @@ describe('cacher', () => {
     describe('getAndSet', () => {
 
       it('correctly retrieves and sets values in cache when using async getter', (done) => {
-
         async function test() {
           async function getData() {
+            // @ts-ignore
             return 'hello-world-' + Math.random(0, 100);
           }
 
           const key = 'thekey';
           let cache = Cacher.create({ttl: 10});
           let value = cache.get(key);
-          (!value).should.equal(true);
+          expect(!value).toEqual(true);
           value = await cache.getAndSet(key, getData, {});
-          value.startsWith('hello-world').should.equal(true);
+          expect(value.startsWith('hello-world')).toEqual(true);
           let value2 = await cache.getAndSet(key, getData, {});
-          value2.should.equal(value);
+          expect(value2).toEqual(value);
           done();
         }
 
@@ -420,13 +403,13 @@ describe('cacher', () => {
 
       it('returns the correct count of items', () => {
         let cache = Cacher.create({ ttl: 10 });
-        cache.stats().count.should.equal(0);
+        expect(cache.stats().count).toEqual(0);
         cache.set('one', {});
-        cache.stats().count.should.equal(1);
+        expect(cache.stats().count).toEqual(1);
         cache.set('one', {});
-        cache.stats().count.should.equal(1);
+        expect(cache.stats().count).toEqual(1);
         cache.set('two', {});
-        cache.stats().count.should.equal(2);
+        expect(cache.stats().count).toEqual(2);
       });
 
       it('returns correct stats', () => {
@@ -439,17 +422,17 @@ describe('cacher', () => {
         cache.get('d');
 
         let stats = cache.stats();
-        stats.count.should.equal(1);
-        stats.hits.should.equal(1);
-        stats.misses.should.equal(3);
-        stats.hitRate.should.equal(0.25);
+        expect(stats.count).toEqual(1);
+        expect(stats.hits).toEqual(1);
+        expect(stats.misses).toEqual(3);
+        expect(stats.hitRate).toEqual(0.25);
 
         cache.clear();
         stats = cache.stats();
-        stats.count.should.equal(0);
-        stats.hits.should.equal(0);
-        stats.misses.should.equal(0);
-        stats.hitRate.should.equal(0);
+        expect(stats.count).toEqual(0);
+        expect(stats.hits).toEqual(0);
+        expect(stats.misses).toEqual(0);
+        expect(stats.hitRate).toEqual(0);
 
         cache.get('a');
         cache.set('a', {});
@@ -458,10 +441,10 @@ describe('cacher', () => {
         cache.get('a');
 
         stats = cache.stats();
-        stats.count.should.equal(1);
-        stats.hits.should.equal(3);
-        stats.misses.should.equal(1);
-        stats.hitRate.should.equal(0.75);
+        expect(stats.count).toEqual(1);
+        expect(stats.hits).toEqual(3);
+        expect(stats.misses).toEqual(1);
+        expect(stats.hitRate).toEqual(0.75);
       });
 
     });
@@ -475,9 +458,9 @@ describe('cacher', () => {
         cache.set('two', {});
 
         let keys = cache.keys();
-        keys.length.should.equal(2);
-        keys[0].should.equal('one');
-        keys[1].should.equal('two');
+        expect(keys.length).toEqual(2);
+        expect(keys[0]).toEqual('one');
+        expect( keys[1]).toEqual('two');
       });
     });
 
@@ -497,14 +480,14 @@ describe('cacher', () => {
         count += cache.stats.count;
       });
 
-      count.should.equal(2);
+      expect(count).toEqual(2);
       Cacher.clear();
 
       count = 0;
       Cacher.stats().forEach((cache) => {
         count += cache.stats.count;
       });
-      count.should.equal(0);
+      expect(count).toEqual(0);
     });
 
   });
@@ -520,11 +503,11 @@ describe('cacher', () => {
       cache.get('two');
 
       let stats = Cacher.stats();
-      (stats.length > 1).should.equal(true);
-      stats[0].stats.count.should.equal(1);
-      stats[0].stats.hits.should.equal(1);
-      stats[0].stats.misses.should.equal(1);
-      stats[0].stats.hitRate.should.equal(0.5);
+      expect(stats.length > 1).toEqual(true);
+      expect(stats[0].stats.count).toEqual(1);
+      expect(stats[0].stats.hits).toEqual(1);
+      expect(stats[0].stats.misses).toEqual(1);
+      expect(stats[0].stats.hitRate).toEqual(0.5);
     });
 
   });
@@ -533,19 +516,19 @@ describe('cacher', () => {
 
     it('returns undefined if cacher could not be found by id and no cachers are defined', () => {
       let cacher = Cacher.cacher('blah');
-      (!cacher).should.equal(true);
+      expect(!cacher).toEqual(true);
     });
 
     it('returns undefined if cacher could not be found by id and cachers are defined', () => {
       Cacher.create({ ttl: 1, id: 'peas' });
       let cacher = Cacher.cacher('blah');
-      (!cacher).should.equal(true);
+      expect(!cacher).toEqual(true);
     });
 
     it('returns cacher if found by id', () => {
       Cacher.create({ ttl: 1, id: 'blah' });
       let cacher = Cacher.cacher('blah');
-      (!cacher).should.equal(false);
+      expect(!cacher).toEqual(false);
     });
 
   });
@@ -556,7 +539,7 @@ describe('cacher', () => {
       Cacher.create({ ttl: 1, id: 'one' });
       Cacher.create({ ttl: 1, id: 'two' });
       Cacher.create({ ttl: 1, id: 'three' });
-      Cacher.cachers().length.should.equal(38);
+      expect(Cacher.cachers().length).toEqual(38);
     });
 
   });
@@ -567,12 +550,12 @@ describe('cacher', () => {
       let cache = Cacher.create({ ttl: 1 });
       cache.set('one', {});
       cache.set('two', {});
-      cache.keys().length.should.equal(2);
+      expect(cache.keys().length).toEqual(2);
 
       Cacher.cleanup(1);
 
       setTimeout(() => {
-        cache.keys().length.should.equal(0);
+        expect(cache.keys().length).toEqual(0);
         done();
       }, 3000);
 
@@ -585,11 +568,11 @@ describe('cacher', () => {
       let cacher = Cacher
         .create({ id: 'test' });
 
-      cacher.id.should.equal('test');
+      expect(cacher.id).toEqual('test');
       let options = cacher.options();
-      options.ttl.should.equal(0);
-      options.clone.should.equal(true);
-      options.storeUndefinedObjects.should.equal(false);
+      expect(options.ttl).toEqual(0);
+      expect(options.clone).toEqual(true);
+      expect(options.storeUndefinedObjects).toEqual(false);
     });
 
     it('instantiates the object correctly with overriden defaults', () => {
@@ -600,11 +583,11 @@ describe('cacher', () => {
         .cleanup(5)
         .create({ id: 'test' });
 
-      cacher.id.should.equal('test');
+      expect(cacher.id).toEqual('test');
       let options = cacher.options();
-      options.ttl.should.equal(1234);
-      options.clone.should.equal(false);
-      options.storeUndefinedObjects.should.equal(true);
+      expect(options.ttl).toEqual(1234);
+      expect(options.clone).toEqual(false);
+      expect(options.storeUndefinedObjects).toEqual(true);
     });
 
   });
@@ -615,16 +598,16 @@ describe('cacher', () => {
       Cacher.create({ ttl: 1, id: 'one' });
       Cacher.create({ ttl: 1, id: 'two' });
       Cacher.create({ ttl: 1, id: 'three' });
-      Cacher.cachers().length.should.equal(44);
+      expect(Cacher.cachers().length).toEqual(44);
 
       let intervalId = Cacher.getCleanupIntervalId();
-      (intervalId !== undefined).should.be.true;
+      expect(intervalId !== undefined).toEqual(true);
 
       Cacher.dispose();
 
-      Cacher.cachers().length.should.equal(0);
+      expect(Cacher.cachers().length).toEqual(0);
       intervalId = Cacher.getCleanupIntervalId();
-      (intervalId === undefined).should.be.true;
+      expect(intervalId === undefined).toEqual(true);
     });
 
   });
