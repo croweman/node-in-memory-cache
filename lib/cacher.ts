@@ -51,7 +51,7 @@ export interface ICacherInstance {
   clear: () => void,
   remove: (key: string, options?: ICacherOptions) => void
   stats: () => IStat,
-  keys: () => Array<string>,
+  keys: () => string[],
   options: () => ICacherInstanceOptions
 }
 
@@ -263,7 +263,7 @@ export default function (options: ICacherOptions): ICacherInstance {
     return stats;
   }
 
-  const keys = (): Array<string> => {
+  const keys = (): string[] => {
     let keys = Object.keys(self.cachedData);
     log(`keys - cacher id: ${self.id}`, { keys });
     return keys;

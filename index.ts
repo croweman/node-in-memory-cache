@@ -3,13 +3,13 @@ import {ICacherInstance, ICacherOptions, IStat} from "./lib/cacher";
 const Cacher = require('./lib/cacher');
 import {log} from "./lib/logger";
 
-let cachers:Array<ICacherInstance> =  [];
-let defaultTtl = 0;
-let defaultClone = true;
-let defaultStoreUndefinedObjects = false;
-let intervalId;
+let cachers:ICacherInstance[] = [];
+let defaultTtl:number = 0;
+let defaultClone:boolean = true;
+let defaultStoreUndefinedObjects:boolean = false;
+let intervalId:NodeJS.Timer;
 
-const getCachers = (): Array<ICacherInstance> => {
+const getCachers = (): ICacherInstance[] => {
   cachers = cachers.filter(cacher => { return cacher !== undefined && cacher !== null });
   return cachers;
 }
@@ -29,15 +29,15 @@ export interface IStats {
 export interface ICacher {
   create: (options?: ICacherOptions) => ICacherInstance
   clear: () => ICacher
-  stats: () => Array<IStats>
+  stats: () => IStats[]
   cacher: (id: string) => ICacherInstance
-  cachers: () => Array<ICacherInstance>
-  ttl: (ttl: Number) => ICacher
+  cachers: () => ICacherInstance[]
+  ttl: (ttl: number) => ICacher
   clone: (clone: boolean) => ICacher
   storeUndefinedObjects: (storeUndefinedObjects: boolean) => ICacher
   cleanup: (seconds: number) => ICacher
   dispose: () => void
-  getCleanupIntervalId: () => number
+  getCleanupIntervalId: () => NodeJS.Timer
 }
 
 const cacherWrapper: ICacher = {
@@ -65,8 +65,8 @@ const cacherWrapper: ICacher = {
     clearCachers();
     return cacherWrapper;
   },
-  stats: (): Array<IStats> => {
-    const stats:Array<IStats> = []
+  stats: (): IStats[] => {
+    const stats:IStats[] = []
 
     getCachers().forEach(cacher => {
       stats.push({
@@ -93,7 +93,7 @@ const cacherWrapper: ICacher = {
     log(`getting cacher - id: ${id}, found: ${cacher !== undefined && cacher !== null }`);
     return cacher;
   },
-  cachers: (): Array<ICacherInstance> => {
+  cachers: (): ICacherInstance[] => {
     let cachers = getCachers();
     let ids = cachers.map((cacher) => { return cacher.id; });
     log('getting cachers - ids', { ids });
@@ -144,7 +144,7 @@ const cacherWrapper: ICacher = {
     clearCachers();
     cachers = [];
   },
-  getCleanupIntervalId: (): number => {
+  getCleanupIntervalId: (): NodeJS.Timer => {
     return intervalId;
   }
 };
