@@ -68,7 +68,7 @@ Object is used to create cacher instances, default configuration variables and s
 ## create
 
 ```js
-let cacher = require('cache-memory')
+const cache = require('cache-memory')
     .create([options]);
 ```
 
@@ -151,7 +151,7 @@ Gets all active cache instances.
 ## cacher
 
 ```js
-let cacher = require('cache-memory').cacher('snacks');
+const cacher = require('cache-memory').cacher('snacks');
 ```
 
 Gets an active cacher by it's id.
@@ -252,11 +252,8 @@ Stores an object in cache.
 
 If 'storeUndefinedObjects' is false. undefined, null and objects with an IsNull function that returns true will not be stored.
 
-## getAndSet v2.*
 
-Version 2.* of the modules getAndSet function is an `async` function
-
-### async getAndSet
+### getAndSet
 
 ```js
 async function getter() {
@@ -269,24 +266,6 @@ await cache.getAndSet(key, getter, [options]);
 Gets and sets an object in cache.  The getAndSet function is a `generator` function so should be yielded or Promisified etc.
 
 ### options
- - `storeUndefinedObjects`: (default: global or instance level definition) Defines whether undefined objects should be stored in memory.
- - `ttl`: (default: global or instance level definition) Defines in seconds how long an object should be stored in memory.
-   `0` = Forever
-
-## getAndSet v1.*
-
-Version 1.* of the modules getAndSet function is a `generator` function
-
-### * getAndSet
-
-```js
-yield* cache.getAndSet(key, [options]);
-```
-
-Gets and sets an object in cache.  The getAndSet function is a `generator` function so should be yielded or Promisified etc.
-
-### options
- - `generator`: A generator function that will be yielded to return the object value to store in cache.
  - `storeUndefinedObjects`: (default: global or instance level definition) Defines whether undefined objects should be stored in memory.
  - `ttl`: (default: global or instance level definition) Defines in seconds how long an object should be stored in memory.
    `0` = Forever
@@ -356,7 +335,7 @@ Example return value:
 
 (MIT)
 
-Copyright (c) 2017 Lee Crowe
+Copyright (c) 2023 Lee Crowe
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in

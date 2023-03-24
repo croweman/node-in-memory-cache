@@ -49,7 +49,6 @@ export interface ICacherOptions {
     count?: CountEventFunction
 }
 
-
 export interface ICacherInstanceOptions {
     ttl: number
     storeUndefinedObjects: boolean

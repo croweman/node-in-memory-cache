@@ -20,8 +20,6 @@ const clearCachers = (): void => {
   });
 }
 
-
-
 const cacherWrapper: ICacher = {
   create: (options?: ICacherOptions) => {
     const cacherOptions: ICacherOptions = options || {} as ICacherOptions
