@@ -6,17 +6,8 @@ Node module for in memory caching.
 
 With [npm](http://npmjs.org)
 
-
-If using a node version that supports `async/await` do
-
 ```bash
-$ npm install cache-memory --save
-```
-
-Otherwise do
-
-```bash
-$ npm install cache-memory@1.0.11 --save
+$ npm i cache-memory@3.0.0
 ```
 
 ## Example usage
@@ -31,15 +22,15 @@ const cache = require('cache-memory')
   .create({ id: 'snacks' });
 
 function standardGetAndSetExample() {
-  const key = 'the_key1';
-  let result = cache.get(key);
+   const key = 'the_key1';
+   let result = cache.get(key);
 
-  if (!result) {
-    cache.set(key, { snack: 'crisps'});
-    result = cache.get(key);
-  }
+   if (!result) {
+      cache.set(key, { snack: 'crisps'});
+      result = cache.get(key);
+   }
 
-  return { value: result, expiry: cache.getExpiry(key) };
+   return { value: result, expiry: cache.getExpiry(key) };
 }
 
 async function getData() {
@@ -47,29 +38,25 @@ async function getData() {
 }
 
 async function getAndSetWithDataRetrievalExample() {
-  const key = 'the_key2';
-
-  let result = await cache.getAndSet(key, {
-    generator: getData
-  });
-
-  return { value: result, expiry: cache.getExpiry(key) };
+   const key = 'the_key2';
+   let result = await cache.getAndSet(key, getData);
+   return { value: result, expiry: cache.getExpiry(key) };
 }
 
 async function test() {
    console.log(`Result 1: ${JSON.stringify(standardGetAndSetExample())}`);
-   console.log(`Result 2: ${JSON.stringify(await getAndSetWithDataRetrievalExample())}`);    
+   console.log(`Result 2: ${JSON.stringify(await getAndSetWithDataRetrievalExample())}`);
 }
 
 test()
-  .then(() => console.log('Done'))
+  .then(() => process.exit(0))
 ```
 
 Example console output of executed code:
 
 ```js
-Result 1: {"value":{"snack":"crisps"},"expiry":"2017-04-18T08:15:19.087Z"}
-Result 2: {"value":{"snack":"chocolate"},"expiry":"2017-04-18T08:15:19.091Z"}
+Result 1: {"value":{"snack":"crisps"},"expiry":"2023-03-24T12:11:07.171Z"}
+Result 2: {"value":{"snack":"chocolate"},"expiry":"2023-03-24T12:11:07.176Z"}
 ```
 
 ## API

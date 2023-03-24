@@ -1,7 +1,6 @@
-import {ICacherInstance, ICacherOptions, IStat} from "./lib/cacher";
-
 const Cacher = require('./lib/cacher');
 import {log} from "./lib/logger";
+import {ICacher, ICacherInstance, ICacherOptions, IStats} from "./lib/model-types";
 
 let cachers:ICacherInstance[] = [];
 let defaultTtl:number = 0;
@@ -21,24 +20,7 @@ const clearCachers = (): void => {
   });
 }
 
-export interface IStats {
-  id: string
-  stats: IStat
-}
 
-export interface ICacher {
-  create: (options?: ICacherOptions) => ICacherInstance
-  clear: () => ICacher
-  stats: () => IStats[]
-  cacher: (id: string) => ICacherInstance
-  cachers: () => ICacherInstance[]
-  ttl: (ttl: number) => ICacher
-  clone: (clone: boolean) => ICacher
-  storeUndefinedObjects: (storeUndefinedObjects: boolean) => ICacher
-  cleanup: (seconds: number) => ICacher
-  dispose: () => void
-  getCleanupIntervalId: () => NodeJS.Timer
-}
 
 const cacherWrapper: ICacher = {
   create: (options?: ICacherOptions) => {
@@ -149,4 +131,4 @@ const cacherWrapper: ICacher = {
   }
 };
 
-export default cacherWrapper
+export = cacherWrapper
