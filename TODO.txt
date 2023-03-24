@@ -1,2 +1,5 @@
-ADD javascript comments jsdoc all all methods etc
+ADD javascript comments jsdoc on all public methods etc
 refresh interval??????
+
+UPDATE THE README, add refresh interval stuff if done
+jsdoc should reflect current readme

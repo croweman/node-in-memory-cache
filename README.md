@@ -30,10 +30,6 @@ const cache = require('cache-memory')
   .cleanup(60)
   .create({ id: 'snacks' });
 
-function * getData() {
-  return { snack: 'chocolate' };
-}
-
 function standardGetAndSetExample() {
   const key = 'the_key1';
   let result = cache.get(key);
@@ -46,20 +42,27 @@ function standardGetAndSetExample() {
   return { value: result, expiry: cache.getExpiry(key) };
 }
 
-function * generatorGetAndSetExample() {
+async function getData() {
+   return { snack: 'chocolate' };
+}
+
+async function getAndSetWithDataRetrievalExample() {
   const key = 'the_key2';
 
-  let result = yield* cache.getAndSet(key, {
-    generator: function * () {
-      return yield* getData();
-    }
+  let result = await cache.getAndSet(key, {
+    generator: getData
   });
 
   return { value: result, expiry: cache.getExpiry(key) };
 }
 
-console.log(`Result 1: ${JSON.stringify(standardGetAndSetExample())}`);
-console.log(`Result 2: ${JSON.stringify(generatorGetAndSetExample().next().value)}`);
+async function test() {
+   console.log(`Result 1: ${JSON.stringify(standardGetAndSetExample())}`);
+   console.log(`Result 2: ${JSON.stringify(await getAndSetWithDataRetrievalExample())}`);    
+}
+
+test()
+  .then(() => console.log('Done'))
 ```
 
 Example console output of executed code:
