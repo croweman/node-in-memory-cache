@@ -6,3 +6,4 @@ tsconfig.json
 .travis.yml
 TODO.txt
 example-usage.js
+example-usage-typescript.ts
