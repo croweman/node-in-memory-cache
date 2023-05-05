@@ -9,6 +9,8 @@ function standardGetAndSetExample() {
     const key = 'the_key1';
     let result = cache.get(key);
 
+    let stats = cache.stats()
+    stats.hits
     if (!result) {
         cache.set(key, { snack: 'crisps'});
         result = cache.get(key);

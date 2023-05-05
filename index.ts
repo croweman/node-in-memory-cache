@@ -1,6 +1,6 @@
 const Cacher = require('./lib/cacher');
 import {log} from "./lib/logger";
-import {ICacher, ICacherInstance, ICacherOptions, IStats} from "./lib/model-types";
+import {ICacher, ICacherInstance, ICacherOptions, IStats} from "./lib/types";
 
 let cachers:ICacherInstance[] = [];
 let defaultTtl:number = 0;

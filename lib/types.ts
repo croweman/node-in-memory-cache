@@ -1,5 +1,7 @@
 export interface IStats {
+    /** The id of the cacher the statistics are associated with */
     id: string
+    /** cache usage statistics */
     stats: IStat
 }
 
@@ -21,9 +23,13 @@ export type EventFunction = (eventData:IEventData) => void
 export type CountEventFunction = (eventData:ICountEventData) => void
 
 export interface IStat {
+    /** number of retrievals from the cache */
     hits: number
+    /** number of attempt to retrieve when the item did not exist in cache */
     misses: number
+    /** the hit rate percentage in which an item is requested which exists in cache */
     hitRate: number
+    /** number of items in cache for the cacher */
     count: number
 }
 

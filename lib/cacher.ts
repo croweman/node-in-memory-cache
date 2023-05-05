@@ -6,7 +6,7 @@ import {
   ICacherInstanceOptions,
   ICacherOptions,
   IStat
-} from "./model-types";
+} from "./types";
 const clone = require('clone');
 
 let globalId: number = 0;
