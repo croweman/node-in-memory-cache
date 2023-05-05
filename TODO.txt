@@ -1,5 +1,5 @@
 ADD javascript comments jsdoc on all public methods etc
-refresh interval??????
+refresh interval?????? and interval on failure optional?
 
 UPDATE THE README, add refresh interval stuff if done
 jsdoc should reflect current readme

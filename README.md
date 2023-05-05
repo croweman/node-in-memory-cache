@@ -63,7 +63,7 @@ Result 2: {"value":{"snack":"chocolate"},"expiry":"2023-03-24T12:11:07.176Z"}
 
 ## Cache - cache-memory object
 
-Object is used to create cacher instances, default configuration variables and scheduled object cleanup.
+Object is used to create cache instances, default configuration variables and scheduled object cleanup.
 
 ## create
 
@@ -72,11 +72,11 @@ const cache = require('cache-memory')
     .create([options]);
 ```
 
-Creates a new cacher instance.
+Creates a new cache instance.
 
 ### options
  - `clone`: (default: `true`) Defines whether objects should be cloned when set in and retrieved from cache.
- - `id`: The id of the cacher (string value).
+ - `id`: The id of the cache (string value).
  - `storeUndefinedObjects`: (default: false) Defines whether undefined objects should be stored in memory.
  - `ttl`: (default: `0`) Defines in seconds how long an object should be stored in memory.
    `0` = Forever
@@ -263,7 +263,7 @@ async function getter() {
 await cache.getAndSet(key, getter, [options]);
 ```
 
-Gets and sets an object in cache.  The getAndSet function is a `generator` function so should be yielded or Promisified etc.
+Gets and sets an object in cache.  The getAndSet function is an `async` function so should be awaited.
 
 ### options
  - `storeUndefinedObjects`: (default: global or instance level definition) Defines whether undefined objects should be stored in memory.

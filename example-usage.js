@@ -29,10 +29,10 @@ async function getAndSetWithDataRetrievalExample() {
     return { value: result, expiry: cache.getExpiry(key) };
 }
 
-async function test() {
+async function testImplentation() {
     console.log(`Result 1: ${JSON.stringify(standardGetAndSetExample())}`);
     console.log(`Result 2: ${JSON.stringify(await getAndSetWithDataRetrievalExample())}`);
 }
 
-test()
+testImplentation()
     .then(() => process.exit(0))

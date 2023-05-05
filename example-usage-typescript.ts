@@ -3,17 +3,15 @@ const cache = require('./index')
     .ttl(60)
     .storeUndefinedObjects(false)
     .cleanup(60)
-    .create({ id: 'snacks' });
+    .create({ id: 'snacks' })
 
 function standardGetAndSetExample() {
     const key = 'the_key1';
-    let result = cache.get(key);
+    let result = cache.get(key)
 
-    let stats = cache.stats()
-    stats.hits
     if (!result) {
         cache.set(key, { snack: 'crisps'});
-        result = cache.get(key);
+        result = cache.get(key)
     }
 
     return { value: result, expiry: cache.getExpiry(key) };
@@ -29,10 +27,10 @@ async function getAndSetWithDataRetrievalExample() {
     return { value: result, expiry: cache.getExpiry(key) };
 }
 
-async function test() {
+async function testImplementation() {
     console.log(`Result 1: ${JSON.stringify(standardGetAndSetExample())}`);
     console.log(`Result 2: ${JSON.stringify(await getAndSetWithDataRetrievalExample())}`);
 }
 
-test()
+testImplementation()
     .then(() => process.exit(0))
