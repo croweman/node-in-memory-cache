@@ -1,12 +1,19 @@
 export interface IStats {
-    /** The id of the cacher the statistics are associated with */
+    /** The id of the cache instance the statistics are associated with */
     id: string
     /** cache usage statistics */
     stats: IStat
 }
 
 export interface ICacher {
+    /**
+     * Creates a new cache instance
+     * @param options ICacherOptions
+     */
     create: (options?: ICacherOptions) => ICacherInstance
+    /*
+    Clears the in memory cache of all active cache instances
+     */
     clear: () => ICacher
     stats: () => IStats[]
     cacher: (id: string) => ICacherInstance
@@ -53,6 +60,11 @@ export interface ICacherOptions {
     added?: EventFunction
     removed?: EventFunction
     count?: CountEventFunction
+}
+
+export interface IGetAndSetCacherOptions extends ICacherOptions {
+    refreshIntervalInMilliseconds?: number
+    refreshIntervalWhenRefreshFailsInMilliseconds? :number
 }
 
 export interface ICacherInstanceOptions {

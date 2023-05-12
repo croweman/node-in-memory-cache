@@ -4,7 +4,7 @@ import {
   EventFunction,
   ICacherInstance,
   ICacherInstanceOptions,
-  ICacherOptions,
+  ICacherOptions, IGetAndSetCacherOptions,
   IStat
 } from "./types";
 const clone = require('clone');
@@ -121,7 +121,7 @@ export default function (options: ICacherOptions): ICacherInstance {
     return data ? data.expires : undefined;
   }
 
-  const getAndSet = async (key: string, getter: (...args: any[]) => Promise<any>, options?: ICacherOptions): Promise<any> => {
+  const getAndSet = async (key: string, getter: (...args: any[]) => Promise<any>, options?: IGetAndSetCacherOptions): Promise<any> => {
     const cacherOptions: ICacherOptions = options || {} as ICacherOptions
     // @ts-ignore
     cacherOptions.keyCleaned = true;
@@ -138,11 +138,37 @@ export default function (options: ICacherOptions): ICacherInstance {
       log(`getAndSet - retrieving value from getter - cacher id: ${self.id}, key: ${key}`, { cacherOptions });
       value = await getter();
 
-      set(key, value, options);
+      setWithRefresh(key, value, getter, options);
     }
 
     log(`getAndSet - cacher id: ${self.id}, key: ${key}`, { value });
     return value;
+  }
+
+  const setWithRefresh = (key: string, value:any, getter: (...args: any[]) => Promise<any>, options?: IGetAndSetCacherOptions) => {
+    set(key, value, options)
+
+    if (options.refreshIntervalInMilliseconds === undefined || options.refreshIntervalInMilliseconds === 0)
+      return
+
+    const data = self.cachedData[key];
+    data.refreshIntervalInMilliseconds = options.refreshIntervalInMilliseconds
+    data.refreshIntervalWhenRefreshFailsInMilliseconds = options.refreshIntervalWhenRefreshFailsInMilliseconds
+
+    const timeoutFunc = (milliseconds: number) => {
+      data.timeout = setTimeout(async () => {
+        try {
+          const value = await getter()
+          set(key, value, options)
+          timeoutFunc(milliseconds)
+        } catch (error) {
+          log(`getAndSet - refresh cacher id: ${self.id}, key: ${key}. Failed to update cache, error message was '${error.message}'`);
+          console.log(`Failed to update cache for key '${key}', error message was '${error.message}'`)
+          timeoutFunc(data.refreshIntervalWhenRefreshFailsInMilliseconds ?? milliseconds)
+        }
+      }, milliseconds)
+    }
+    timeoutFunc(data.refreshIntervalInMilliseconds)
   }
 
   const set = (key: string, value: any, options?: ICacherOptions) => {
@@ -185,6 +211,13 @@ export default function (options: ICacherOptions): ICacherInstance {
     log(`clear - cacher id: ${self.id}`);
     self.hits = 0;
     self.misses = 0;
+
+    Object.keys(self.cachedData).forEach(key => {
+      if (self.cachedData[key] !== undefined && self.cachedData[key].timeout) {
+        clearTimeout(self.cachedData[key].timeout)
+      }
+    })
+
     self.cachedData = {};
   }
 
@@ -195,6 +228,11 @@ export default function (options: ICacherOptions): ICacherInstance {
       key = cleanKey(key);
     }
     log(`remove - key: ${key}, cacher id: ${self.id}`);
+
+    if (self.cachedData[key] && self.cachedData[key].timeout) {
+      clearTimeout(self.cachedData[key].timeout)
+    }
+
     delete self.cachedData[key];
     raiseEvent(self.removedCallback, key);
     raiseCountEvent(self.countCallback);

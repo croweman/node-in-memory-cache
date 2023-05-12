@@ -1,5 +1,8 @@
 ADD javascript comments jsdoc on all public methods etc
 refresh interval?????? and interval on failure optional?
+including index.ts
 
 UPDATE THE README, add refresh interval stuff if done
 jsdoc should reflect current readme
+
+will need to clear all timeouts!!!, can it be done on remove, is remove called by clear?
