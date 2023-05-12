@@ -4,3 +4,7 @@ beforeEach(() => {
     GlobalCacher.clear();
 })
 
+afterAll(() => {
+    GlobalCacher.dispose()
+})
+

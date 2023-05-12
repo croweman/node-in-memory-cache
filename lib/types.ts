@@ -77,7 +77,7 @@ export interface ICacherInstance {
     id: string
     get: (key: string, options?: ICacherOptions) => any
     getExpiry: (key: string) => Date
-    getAndSet: (key: string, getter: (...args: any[]) => Promise<any>, options?: ICacherOptions) => Promise<any>
+    getAndSet: (key: string, getter: (...args: any[]) => Promise<any>, options?: IGetAndSetCacherOptions) => Promise<any>
     set: (key: string, value: any, options?: ICacherOptions) => void
     clear: () => void,
     remove: (key: string, options?: ICacherOptions) => void

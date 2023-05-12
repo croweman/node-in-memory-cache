@@ -11,7 +11,7 @@
   "scripts": {
     "prepublish": "npm run build",
     "build": "tsc",
-    "test": "npm run build && jest"
+    "test": "npm run build && jest --detectOpenHandles"
   },
   "contributors": [
     {

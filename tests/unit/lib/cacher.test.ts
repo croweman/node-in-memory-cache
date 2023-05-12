@@ -397,6 +397,72 @@ describe('cacher', () => {
         test();
       });
 
+      it('correctly retrieves and sets values in cache when using async getter and refresh', (done) => {
+        let counter = 0;
+        async function test() {
+          async function getData() {
+            counter++;
+            // @ts-ignore
+            return 'hello-world-' + counter;
+          }
+
+          const key = 'thekey';
+          let cache = Cacher.create({ttl: 10});
+          let value = cache.get(key);
+          expect(!value).toEqual(true);
+          value = await cache.getAndSet(key, getData, {
+            refreshIntervalInMilliseconds: 250
+          });
+          expect(value.startsWith('hello-world-')).toEqual(true);
+
+          setInterval(async () => {
+            let value2 = cache.get(key);
+
+            if (value2) {
+              let lastPart = value2.substring(value2.lastIndexOf('-') + 1);
+              if (parseInt(lastPart) > 4)
+                done();
+            }
+          }, 10)
+        }
+
+        test();
+      })
+
+      it('correctly retrieves and sets values in cache when using async getter and refresh with refresh failure', (done) => {
+        let counter = 0;
+        async function test() {
+          async function getData() {
+            counter++;
+            // @ts-ignore
+            if (counter > 1 && counter < 5)
+              throw new Error('failure')
+            return 'hello-world-' + counter;
+          }
+
+          const key = 'thekey';
+          let cache = Cacher.create({ttl: 10});
+          let value = cache.get(key);
+          expect(!value).toEqual(true);
+          value = await cache.getAndSet(key, getData, {
+            refreshIntervalInMilliseconds: 250,
+            refreshIntervalWhenRefreshFailsInMilliseconds: 125
+          });
+          expect(value.startsWith('hello-world-')).toEqual(true);
+
+          setInterval(async () => {
+            let value2 = cache.get(key);
+            if (value2) {
+              let lastPart = value2.substring(value2.lastIndexOf('-') + 1);
+              if (parseInt(lastPart) > 4)
+                done();
+            }
+          }, 10)
+        }
+
+        test();
+      })
+
     });
 
     describe('stats', () => {
@@ -539,7 +605,7 @@ describe('cacher', () => {
       Cacher.create({ ttl: 1, id: 'one' });
       Cacher.create({ ttl: 1, id: 'two' });
       Cacher.create({ ttl: 1, id: 'three' });
-      expect(Cacher.cachers().length).toEqual(38);
+      expect(Cacher.cachers().length).toEqual(40);
     });
 
   });
@@ -598,7 +664,7 @@ describe('cacher', () => {
       Cacher.create({ ttl: 1, id: 'one' });
       Cacher.create({ ttl: 1, id: 'two' });
       Cacher.create({ ttl: 1, id: 'three' });
-      expect(Cacher.cachers().length).toEqual(44);
+      expect(Cacher.cachers().length).toEqual(46);
 
       let intervalId = Cacher.getCleanupIntervalId();
       expect(intervalId !== undefined).toEqual(true);

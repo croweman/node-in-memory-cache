@@ -163,7 +163,7 @@ export default function (options: ICacherOptions): ICacherInstance {
           timeoutFunc(milliseconds)
         } catch (error) {
           log(`getAndSet - refresh cacher id: ${self.id}, key: ${key}. Failed to update cache, error message was '${error.message}'`);
-          console.log(`Failed to update cache for key '${key}', error message was '${error.message}'`)
+          console.log(`Failed to update cache cacher id: ${self.id}, key: '${key}', error message was '${error.message}'`)
           timeoutFunc(data.refreshIntervalWhenRefreshFailsInMilliseconds ?? milliseconds)
         }
       }, milliseconds)
@@ -215,6 +215,7 @@ export default function (options: ICacherOptions): ICacherInstance {
     Object.keys(self.cachedData).forEach(key => {
       if (self.cachedData[key] !== undefined && self.cachedData[key].timeout) {
         clearTimeout(self.cachedData[key].timeout)
+        delete self.cachedData[key].timeout
       }
     })
 
@@ -231,6 +232,7 @@ export default function (options: ICacherOptions): ICacherInstance {
 
     if (self.cachedData[key] && self.cachedData[key].timeout) {
       clearTimeout(self.cachedData[key].timeout)
+      delete self.cachedData[key].timeout
     }
 
     delete self.cachedData[key];
