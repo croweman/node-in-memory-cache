@@ -415,12 +415,13 @@ describe('cacher', () => {
           });
           expect(value.startsWith('hello-world-')).toEqual(true);
 
-          setInterval(async () => {
+          const intervalId = setInterval(async () => {
             let value2 = cache.get(key);
 
             if (value2) {
               let lastPart = value2.substring(value2.lastIndexOf('-') + 1);
               if (parseInt(lastPart) > 4)
+                clearInterval(intervalId);
                 done();
             }
           }, 10)
@@ -450,11 +451,12 @@ describe('cacher', () => {
           });
           expect(value.startsWith('hello-world-')).toEqual(true);
 
-          setInterval(async () => {
+          const intervalId = setInterval(async () => {
             let value2 = cache.get(key);
             if (value2) {
               let lastPart = value2.substring(value2.lastIndexOf('-') + 1);
               if (parseInt(lastPart) > 4)
+                clearInterval(intervalId)
                 done();
             }
           }, 10)

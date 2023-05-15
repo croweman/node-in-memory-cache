@@ -186,6 +186,9 @@ export default function (options: ICacherOptions): ICacherInstance {
       key = cleanKey(key);
     }
 
+    if (self.cachedData[key] && self.cachedData[key].timeout)
+      clearTimeout(self.cachedData[key].timeout)
+
     let ttl = cacherOptions.ttl || self.ttl;
     let expiryDate;
 
