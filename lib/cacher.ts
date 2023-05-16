@@ -157,13 +157,14 @@ export default function (options: ICacherOptions): ICacherInstance {
 
     const timeoutFunc = (milliseconds: number) => {
       data.timeout = setTimeout(async () => {
+        log(`getAndSet - refresh cacher id: ${self.id}, key: ${key}. Getting data to update cache'`);
         try {
           const value = await getter()
           set(key, value, options)
           timeoutFunc(milliseconds)
         } catch (error) {
           log(`getAndSet - refresh cacher id: ${self.id}, key: ${key}. Failed to update cache, error message was '${error.message}'`);
-          console.log(`Failed to update cache cacher id: ${self.id}, key: '${key}', error message was '${error.message}'`)
+          log(`Failed to update cache cacher id: ${self.id}, key: '${key}', error message was '${error.message}'`)
           timeoutFunc(data.refreshIntervalWhenRefreshFailsInMilliseconds ?? milliseconds)
         }
       }, milliseconds)

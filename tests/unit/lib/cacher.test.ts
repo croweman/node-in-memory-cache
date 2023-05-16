@@ -397,74 +397,69 @@ describe('cacher', () => {
         test();
       });
 
-      it('correctly retrieves and sets values in cache when using async getter and refresh', (done) => {
+      it('correctly retrieves and sets values in cache when using async getter and refresh', async () => {
         let counter = 0;
-        async function test() {
-          async function getData() {
-            counter++;
-            // @ts-ignore
-            return 'hello-world-' + counter;
-          }
 
-          const key = 'thekey';
-          let cache = Cacher.create({ttl: 10});
-          let value = cache.get(key);
-          expect(!value).toEqual(true);
-          value = await cache.getAndSet(key, getData, {
-            refreshIntervalInMilliseconds: 250
-          });
-          expect(value.startsWith('hello-world-')).toEqual(true);
-
-          const intervalId = setInterval(async () => {
-            let value2 = cache.get(key);
-
-            if (value2) {
-              let lastPart = value2.substring(value2.lastIndexOf('-') + 1);
-              if (parseInt(lastPart) > 4)
-                clearInterval(intervalId);
-                done();
-            }
-          }, 10)
+        async function getData() {
+          counter++;
+          // @ts-ignore
+          return 'hello-world-' + counter;
         }
 
-        test();
+        const key = 'thekey';
+        let cache = Cacher.create({ttl: 10});
+        let value = cache.get(key);
+        expect(!value).toEqual(true);
+        value = await cache.getAndSet(key, getData, {
+          refreshIntervalInMilliseconds: 250
+        });
+        expect(value.startsWith('hello-world-')).toEqual(true);
+
+        await waitForAssertions(() => {
+          let value2 = cache.get(key);
+
+          if (value2) {
+            let lastPart = value2.substring(value2.lastIndexOf('-') + 1);
+            if (parseInt(lastPart) <= 4) {
+              throw new Error('Expectation not met');
+            }
+          }
+        })
+        console.log('got here')
+        cache.remove(key)
       })
 
-      it('correctly retrieves and sets values in cache when using async getter and refresh with refresh failure', (done) => {
+      it('correctly retrieves and sets values in cache when using async getter and refresh with refresh failure', async () => {
         let counter = 0;
-        async function test() {
-          async function getData() {
-            counter++;
-            // @ts-ignore
-            if (counter > 1 && counter < 5)
-              throw new Error('failure')
-            return 'hello-world-' + counter;
-          }
 
-          const key = 'thekey';
-          let cache = Cacher.create({ttl: 10});
-          let value = cache.get(key);
-          expect(!value).toEqual(true);
-          value = await cache.getAndSet(key, getData, {
-            refreshIntervalInMilliseconds: 250,
-            refreshIntervalWhenRefreshFailsInMilliseconds: 125
-          });
-          expect(value.startsWith('hello-world-')).toEqual(true);
-
-          const intervalId = setInterval(async () => {
-            let value2 = cache.get(key);
-            if (value2) {
-              let lastPart = value2.substring(value2.lastIndexOf('-') + 1);
-              if (parseInt(lastPart) > 4)
-                clearInterval(intervalId)
-                done();
-            }
-          }, 10)
+        async function getData() {
+          counter++;
+          // @ts-ignore
+          if (counter > 1 && counter < 5)
+            throw new Error('failure')
+          return 'hello-world-' + counter;
         }
 
-        test();
-      })
+        const key = 'thekey';
+        let cache = Cacher.create({ttl: 10});
+        let value = cache.get(key);
+        expect(!value).toEqual(true);
+        value = await cache.getAndSet(key, getData, {
+          refreshIntervalInMilliseconds: 250,
+          refreshIntervalWhenRefreshFailsInMilliseconds: 125
+        });
+        expect(value.startsWith('hello-world-')).toEqual(true);
 
+        await waitForAssertions(() => {
+          let value2 = cache.get(key);
+          if (value2) {
+            let lastPart = value2.substring(value2.lastIndexOf('-') + 1);
+            if (parseInt(lastPart) <= 4) {
+              throw new Error('Expectation not met');
+            }
+          }
+        })
+      })
     });
 
     describe('stats', () => {
@@ -679,5 +674,24 @@ describe('cacher', () => {
     });
 
   });
+
+  const waitForAssertions = (assertionFunc: () => any, timeoutMilliseconds = 2000, failureMessage?:string) => new Promise((resolve, reject) => {
+    const timeoutId = setTimeout(() => {
+      clearInterval(intervalId)
+      const message = failureMessage ?? `Assertion conditions were not met within ${timeoutMilliseconds} milliseconds`
+      reject(new Error(message))
+    }, timeoutMilliseconds)
+
+    const intervalId = setInterval( () => {
+      try {
+        assertionFunc()
+        clearTimeout(timeoutId)
+        clearInterval(intervalId)
+        return resolve({})
+      } catch (err) {
+        // do nothing
+      }
+    }, 10)
+  })
 
 });
