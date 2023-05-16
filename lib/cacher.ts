@@ -122,7 +122,7 @@ export default function (options: ICacherOptions): ICacherInstance {
   }
 
   const getAndSet = async (key: string, getter: (...args: any[]) => Promise<any>, options?: IGetAndSetCacherOptions): Promise<any> => {
-    const cacherOptions: ICacherOptions = options || {} as ICacherOptions
+    const cacherOptions: ICacherOptions = clone(options || {}) as ICacherOptions
     // @ts-ignore
     cacherOptions.keyCleaned = true;
 
@@ -146,17 +146,17 @@ export default function (options: ICacherOptions): ICacherInstance {
   }
 
   const setWithRefresh = (key: string, value:any, getter: (...args: any[]) => Promise<any>, options?: IGetAndSetCacherOptions) => {
-    set(key, value, options)
+    setInternal(key, value, true, options)
 
     if (options.refreshIntervalInMilliseconds === undefined || options.refreshIntervalInMilliseconds === 0)
       return
 
-    const data = self.cachedData[key];
-    data.refreshIntervalInMilliseconds = options.refreshIntervalInMilliseconds
-    data.refreshIntervalWhenRefreshFailsInMilliseconds = options.refreshIntervalWhenRefreshFailsInMilliseconds
+    let data = self.cachedData[key];
 
     const timeoutFunc = (milliseconds: number) => {
+      data = self.cachedData[key]
       data.timeout = setTimeout(async () => {
+        if (!data.timeout) return
         log(`getAndSet - refresh cacher id: ${self.id}, key: ${key}. Getting data to update cache'`);
         try {
           const value = await getter()
@@ -165,14 +165,18 @@ export default function (options: ICacherOptions): ICacherInstance {
         } catch (error) {
           log(`getAndSet - refresh cacher id: ${self.id}, key: ${key}. Failed to update cache, error message was '${error.message}'`);
           log(`Failed to update cache cacher id: ${self.id}, key: '${key}', error message was '${error.message}'`)
-          timeoutFunc(data.refreshIntervalWhenRefreshFailsInMilliseconds ?? milliseconds)
+          timeoutFunc(options.refreshIntervalWhenRefreshFailsInMilliseconds ?? milliseconds)
         }
       }, milliseconds)
     }
-    timeoutFunc(data.refreshIntervalInMilliseconds)
+    timeoutFunc(options.refreshIntervalInMilliseconds)
   }
 
   const set = (key: string, value: any, options?: ICacherOptions) => {
+    setInternal(key, value, false, options)
+  }
+
+  const setInternal = (key: string, value: any, refresh:boolean, options?: ICacherOptions) => {
     const cacherOptions: ICacherOptions = options || {} as ICacherOptions
 
     if (!self.storeUndefinedObjects && (value === undefined || value === null || (typeof value.isNull === "function" && value.isNull()))) {
@@ -187,9 +191,16 @@ export default function (options: ICacherOptions): ICacherInstance {
       key = cleanKey(key);
     }
 
-    if (self.cachedData[key] && self.cachedData[key].timeout) {
-      clearTimeout(self.cachedData[key].timeout)
-      delete self.cachedData[key].timeout
+    let timeout
+    if (self.cachedData[key]) {
+      if (refresh) {
+        timeout = self.cachedData[key].timeout
+      } else {
+        if (self.cachedData[key].timeout) {
+          clearTimeout(self.cachedData[key].timeout)
+          delete self.cachedData[key].timeout
+        }
+      }
     }
 
     let ttl = cacherOptions.ttl || self.ttl;
@@ -205,9 +216,15 @@ export default function (options: ICacherOptions): ICacherInstance {
     let valueToCache = self.clone === true ? clone(value) : value;
     let cacheValue = {
       value: valueToCache,
-      expires: expiryDate
-    };
+      expires: expiryDate,
+      timeout: undefined
+    }
+
+    if (refresh) {
+      cacheValue.timeout = timeout
+    }
     self.cachedData[key] = cacheValue;
+
     log(`set - stored value - cacher id: ${self.id}, key: ${key}`, { cachedData: cacheValue });
     raiseEvent(self.addedCallback, key);
     raiseCountEvent(self.countCallback);

@@ -425,8 +425,6 @@ describe('cacher', () => {
             }
           }
         })
-        console.log('got here')
-        cache.remove(key)
       })
 
       it('correctly retrieves and sets values in cache when using async getter and refresh with refresh failure', async () => {
