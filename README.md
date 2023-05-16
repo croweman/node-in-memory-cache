@@ -205,11 +205,11 @@ Gets an object from cache, undefined will be returned if object does not exist.
  - `storeUndefinedObjects`: (default: `false`) Defines whether undefined objects should be stored in memory.
  - `ttl`: (default: `0`) Defines in seconds how long an object should be stored in memory.
    `0` = Forever
- - `hit`: Function called every time an object is retrieved from cache.
- - `miss`: Function called every time an object is not from cache.
- - `added`: Function called every time an object is added to cache.
- - `removed`: Function called every time an object is removed from cache.
- - `count`: Function called every time an object is added or removed from cache.
+ - `hit`: (optional) Function called every time an object is retrieved from cache.
+ - `miss`: (optional) Function called every time an object is not from cache.
+ - `added`: (optional) Function called every time an object is added to cache.
+ - `removed`: (optional) Function called every time an object is removed from cache.
+ - `count`: (optional) Function called every time an object is added or removed from cache.
 
 ** hit, miss, added, removed functions are all called with the following object structure.
 
@@ -269,6 +269,8 @@ Gets and sets an object in cache.  The getAndSet function is an `async` function
  - `storeUndefinedObjects`: (default: global or instance level definition) Defines whether undefined objects should be stored in memory.
  - `ttl`: (default: global or instance level definition) Defines in seconds how long an object should be stored in memory.
    `0` = Forever
+ - `refreshIntervalInMilliseconds`: (optional) Defines whether the cache should be refreshed using the `getter` every so many milliseconds.
+ - `refreshIntervalWhenRefreshFailsInMilliseconds`: (optional) If `refreshIntervalInMilliseconds` is set and a failure occurs when refreshing the cache the refresh delay will change to `refreshIntervalWhenRefreshFailsInMilliseconds` if set otherwise `refreshIntervalInMilliseconds`.
 
 ## clear
 

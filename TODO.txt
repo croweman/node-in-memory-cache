@@ -4,7 +4,3 @@ including index.ts
 
 UPDATE THE README, add refresh interval stuff if done
 jsdoc should reflect current readme
-
-will need to clear all timeouts!!!, can it be done on remove, is remove called by clear?
-
-Why is process not being cleared when running individual tests?
