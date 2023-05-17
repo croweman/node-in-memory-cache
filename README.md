@@ -73,6 +73,9 @@ const cache = require('cache-memory')
 Creates a new cache instance.
 
 ### options
+
+This argument is optional.
+
  - `clone`: (default: `true`) Defines whether objects should be cloned when set in and retrieved from cache.
  - `id`: (optional string) The id of the cache. If no id is supplied it will be generated.
  - `storeUndefinedObjects`: (default: false) Defines whether undefined objects should be stored in memory.
@@ -141,7 +144,7 @@ Clears the in memory cache of all active cache instances.
 ## cachers
 
 ```js
-let cachers = require('cache-memory').cachers();
+const cachers = require('cache-memory').cachers();
 ```
 
 Gets all active cache instances.
@@ -157,7 +160,7 @@ Gets an active cacher by it's id.
 ## stats
 
 ```js
-let stats = require('cache-memory').stats();
+const stats = require('cache-memory').stats();
 ```
 
 Gets an array of stats across all active cachers.
@@ -192,12 +195,15 @@ It's functions are defined below.
 ## get
 
 ```js
-let obj = cache.get(key, [options]);
+const obj = cache.get(key, [options]);
 ```
 
 Gets an object from cache, undefined will be returned if object does not exist.
 
 ### options
+
+This argument is optional.
+
  - `clone`: (default: `true`) Defines whether objects should be cloned when set in and retrieved from cache.
  - `id`: The id of the cacher (string value).
  - `storeUndefinedObjects`: (default: `false`) Defines whether undefined objects should be stored in memory.
@@ -244,6 +250,9 @@ cache.set(key, value, [options]);
 Stores an object in cache.
 
 ## options
+
+This argument is optional.
+
  - `storeUndefinedObjects`: (default: global or instance level definition) Defines whether undefined objects should be stored in memory.
  - `ttl`: (default: global or instance level definition) Defines in seconds how long an object should be stored in memory.
    `0` = Forever
@@ -264,6 +273,9 @@ await cache.getAndSet(key, getter, [options]);
 Gets and sets an object in cache.  The getAndSet function is an `async` function so should be awaited.  It can also refresh its data in the background.
 
 ### options
+
+This argument is optional.
+
  - `storeUndefinedObjects`: (default: global or instance level definition) Defines whether undefined objects should be stored in memory.
  - `ttl`: (default: global or instance level definition) Defines in seconds how long an object should be stored in memory.
    `0` = Forever
