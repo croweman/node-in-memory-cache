@@ -13,8 +13,6 @@ $ npm i cache-memory@3.0.0
 ## Example usage
 
 ```js
-'use strict';
-
 const cache = require('cache-memory')
   .ttl(60)
   .storeUndefinedObjects(false)
@@ -76,7 +74,7 @@ Creates a new cache instance.
 
 ### options
  - `clone`: (default: `true`) Defines whether objects should be cloned when set in and retrieved from cache.
- - `id`: The id of the cache (string value).
+ - `id`: (optional string) The id of the cache. If no id is supplied it will be generated.
  - `storeUndefinedObjects`: (default: false) Defines whether undefined objects should be stored in memory.
  - `ttl`: (default: `0`) Defines in seconds how long an object should be stored in memory.
    `0` = Forever
@@ -232,7 +230,7 @@ Gets an object from cache, undefined will be returned if object does not exist.
 ## getExpiry
 
 ```js
-let expiry = cache.getExpiry(key);
+const expiry = cache.getExpiry(key);
 ```
 
 Gets the expiry DateTime of an object in cache, undefined is returned if object is not found.
@@ -263,7 +261,7 @@ async function getter() {
 await cache.getAndSet(key, getter, [options]);
 ```
 
-Gets and sets an object in cache.  The getAndSet function is an `async` function so should be awaited.
+Gets and sets an object in cache.  The getAndSet function is an `async` function so should be awaited.  It can also refresh its data in the background.
 
 ### options
  - `storeUndefinedObjects`: (default: global or instance level definition) Defines whether undefined objects should be stored in memory.
@@ -291,7 +289,7 @@ Remove the object from cache.
 ## stats
 
 ```js
-let stats = cache.stats();
+const stats = cache.stats();
 ```
 
 Gets the stats for the cache instance.
@@ -310,7 +308,7 @@ Example return value:
 ## keys
 
 ```js
-let keys = cache.keys();
+const keys = cache.keys();
 ```
 
 Gets all keys for objects stored in the cache instance.
@@ -318,7 +316,7 @@ Gets all keys for objects stored in the cache instance.
 ## options
 
 ```js
-let options = cache.options();
+const options = cache.options();
 ```
 
 Gets all configured options for a cache instance.
