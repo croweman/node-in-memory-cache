@@ -123,6 +123,15 @@ require('cache-memory')
 
 Allows undefined objects to be stored in cache (default `false`).
 
+## ttl
+
+```js
+require('cache-memory')
+    .ttl(true);
+```
+
+Defines in seconds how long an object should be stored in memory.
+
 ## cleanup
 
 ```js

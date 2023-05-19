@@ -1,5 +1,10 @@
 const debug = require('debug')('cache-memory')
 
+/**
+ * Logs a debug message
+ * @param message to log
+ * @param loggingObj Object to log details about
+ */
 export const log = (message:string, loggingObj?:any) => {
   if (!debug.enabled) return
 
