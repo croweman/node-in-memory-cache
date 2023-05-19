@@ -7,7 +7,7 @@ Node module for in memory caching.
 With [npm](http://npmjs.org)
 
 ```bash
-$ npm i cache-memory@3.0.0
+$ npm i cache-memory@3.0.3
 ```
 
 ## Example usage
