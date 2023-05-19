@@ -6,87 +6,78 @@ Node module for in memory caching.
 
 With [npm](http://npmjs.org)
 
-
-If using a node version that supports `async/await` do
-
 ```bash
-$ npm install cache-memory --save
-```
-
-Otherwise do
-
-```bash
-$ npm install cache-memory@1.0.11 --save
+$ npm i cache-memory@3.0.0
 ```
 
 ## Example usage
 
 ```js
-'use strict';
-
 const cache = require('cache-memory')
   .ttl(60)
   .storeUndefinedObjects(false)
   .cleanup(60)
   .create({ id: 'snacks' });
 
-function * getData() {
-  return { snack: 'chocolate' };
-}
-
 function standardGetAndSetExample() {
-  const key = 'the_key1';
-  let result = cache.get(key);
+   const key = 'the_key1';
+   let result = cache.get(key);
 
-  if (!result) {
-    cache.set(key, { snack: 'crisps'});
-    result = cache.get(key);
-  }
+   if (!result) {
+      cache.set(key, { snack: 'crisps'});
+      result = cache.get(key);
+   }
 
-  return { value: result, expiry: cache.getExpiry(key) };
+   return { value: result, expiry: cache.getExpiry(key) };
 }
 
-function * generatorGetAndSetExample() {
-  const key = 'the_key2';
-
-  let result = yield* cache.getAndSet(key, {
-    generator: function * () {
-      return yield* getData();
-    }
-  });
-
-  return { value: result, expiry: cache.getExpiry(key) };
+async function getData() {
+   return { snack: 'chocolate' };
 }
 
-console.log(`Result 1: ${JSON.stringify(standardGetAndSetExample())}`);
-console.log(`Result 2: ${JSON.stringify(generatorGetAndSetExample().next().value)}`);
+async function getAndSetWithDataRetrievalExample() {
+   const key = 'the_key2';
+   let result = await cache.getAndSet(key, getData);
+   return { value: result, expiry: cache.getExpiry(key) };
+}
+
+async function test() {
+   console.log(`Result 1: ${JSON.stringify(standardGetAndSetExample())}`);
+   console.log(`Result 2: ${JSON.stringify(await getAndSetWithDataRetrievalExample())}`);
+}
+
+test()
+  .then(() => process.exit(0))
 ```
 
 Example console output of executed code:
 
 ```js
-Result 1: {"value":{"snack":"crisps"},"expiry":"2017-04-18T08:15:19.087Z"}
-Result 2: {"value":{"snack":"chocolate"},"expiry":"2017-04-18T08:15:19.091Z"}
+Result 1: {"value":{"snack":"crisps"},"expiry":"2023-03-24T12:11:07.171Z"}
+Result 2: {"value":{"snack":"chocolate"},"expiry":"2023-03-24T12:11:07.176Z"}
 ```
 
 ## API
 
 ## Cache - cache-memory object
 
-Object is used to create cacher instances, default configuration variables and scheduled object cleanup.
+Object is used to create cache instances, default configuration variables and scheduled object cleanup.
 
 ## create
 
 ```js
-let cacher = require('cache-memory')
+const cache = require('cache-memory')
     .create([options]);
 ```
 
-Creates a new cacher instance.
+Creates a new cache instance.
 
 ### options
+
+This argument is optional.
+
  - `clone`: (default: `true`) Defines whether objects should be cloned when set in and retrieved from cache.
- - `id`: The id of the cacher (string value).
+ - `id`: (optional string) The id of the cache. If no id is supplied it will be generated.
  - `storeUndefinedObjects`: (default: false) Defines whether undefined objects should be stored in memory.
  - `ttl`: (default: `0`) Defines in seconds how long an object should be stored in memory.
    `0` = Forever
@@ -132,6 +123,15 @@ require('cache-memory')
 
 Allows undefined objects to be stored in cache (default `false`).
 
+## ttl
+
+```js
+require('cache-memory')
+    .ttl(true);
+```
+
+Defines in seconds how long an object should be stored in memory.
+
 ## cleanup
 
 ```js
@@ -153,7 +153,7 @@ Clears the in memory cache of all active cache instances.
 ## cachers
 
 ```js
-let cachers = require('cache-memory').cachers();
+const cachers = require('cache-memory').cachers();
 ```
 
 Gets all active cache instances.
@@ -161,7 +161,7 @@ Gets all active cache instances.
 ## cacher
 
 ```js
-let cacher = require('cache-memory').cacher('snacks');
+const cacher = require('cache-memory').cacher('snacks');
 ```
 
 Gets an active cacher by it's id.
@@ -169,7 +169,7 @@ Gets an active cacher by it's id.
 ## stats
 
 ```js
-let stats = require('cache-memory').stats();
+const stats = require('cache-memory').stats();
 ```
 
 Gets an array of stats across all active cachers.
@@ -204,22 +204,25 @@ It's functions are defined below.
 ## get
 
 ```js
-let obj = cache.get(key, [options]);
+const obj = cache.get(key, [options]);
 ```
 
 Gets an object from cache, undefined will be returned if object does not exist.
 
 ### options
+
+This argument is optional.
+
  - `clone`: (default: `true`) Defines whether objects should be cloned when set in and retrieved from cache.
  - `id`: The id of the cacher (string value).
  - `storeUndefinedObjects`: (default: `false`) Defines whether undefined objects should be stored in memory.
  - `ttl`: (default: `0`) Defines in seconds how long an object should be stored in memory.
    `0` = Forever
- - `hit`: Function called every time an object is retrieved from cache.
- - `miss`: Function called every time an object is not from cache.
- - `added`: Function called every time an object is added to cache.
- - `removed`: Function called every time an object is removed from cache.
- - `count`: Function called every time an object is added or removed from cache.
+ - `hit`: (optional) Function called every time an object is retrieved from cache.
+ - `miss`: (optional) Function called every time an object is not from cache.
+ - `added`: (optional) Function called every time an object is added to cache.
+ - `removed`: (optional) Function called every time an object is removed from cache.
+ - `count`: (optional) Function called every time an object is added or removed from cache.
 
 ** hit, miss, added, removed functions are all called with the following object structure.
 
@@ -242,7 +245,7 @@ Gets an object from cache, undefined will be returned if object does not exist.
 ## getExpiry
 
 ```js
-let expiry = cache.getExpiry(key);
+const expiry = cache.getExpiry(key);
 ```
 
 Gets the expiry DateTime of an object in cache, undefined is returned if object is not found.
@@ -256,17 +259,17 @@ cache.set(key, value, [options]);
 Stores an object in cache.
 
 ## options
+
+This argument is optional.
+
  - `storeUndefinedObjects`: (default: global or instance level definition) Defines whether undefined objects should be stored in memory.
  - `ttl`: (default: global or instance level definition) Defines in seconds how long an object should be stored in memory.
    `0` = Forever
 
 If 'storeUndefinedObjects' is false. undefined, null and objects with an IsNull function that returns true will not be stored.
 
-## getAndSet v2.*
 
-Version 2.* of the modules getAndSet function is an `async` function
-
-### async getAndSet
+### getAndSet
 
 ```js
 async function getter() {
@@ -276,30 +279,17 @@ async function getter() {
 await cache.getAndSet(key, getter, [options]);
 ```
 
-Gets and sets an object in cache.  The getAndSet function is a `generator` function so should be yielded or Promisified etc.
+Gets and sets an object in cache.  The getAndSet function is an `async` function so should be awaited.  It can also refresh its data in the background.
 
 ### options
+
+This argument is optional.
+
  - `storeUndefinedObjects`: (default: global or instance level definition) Defines whether undefined objects should be stored in memory.
  - `ttl`: (default: global or instance level definition) Defines in seconds how long an object should be stored in memory.
    `0` = Forever
-
-## getAndSet v1.*
-
-Version 1.* of the modules getAndSet function is a `generator` function
-
-### * getAndSet
-
-```js
-yield* cache.getAndSet(key, [options]);
-```
-
-Gets and sets an object in cache.  The getAndSet function is a `generator` function so should be yielded or Promisified etc.
-
-### options
- - `generator`: A generator function that will be yielded to return the object value to store in cache.
- - `storeUndefinedObjects`: (default: global or instance level definition) Defines whether undefined objects should be stored in memory.
- - `ttl`: (default: global or instance level definition) Defines in seconds how long an object should be stored in memory.
-   `0` = Forever
+ - `refreshIntervalInMilliseconds`: (optional) Defines whether the cache should be refreshed using the `getter` every so many milliseconds.
+ - `refreshIntervalWhenRefreshFailsInMilliseconds`: (optional) If `refreshIntervalInMilliseconds` is set and a failure occurs when refreshing the cache the refresh delay will change to `refreshIntervalWhenRefreshFailsInMilliseconds` if set otherwise `refreshIntervalInMilliseconds`.
 
 ## clear
 
@@ -320,7 +310,7 @@ Remove the object from cache.
 ## stats
 
 ```js
-let stats = cache.stats();
+const stats = cache.stats();
 ```
 
 Gets the stats for the cache instance.
@@ -339,7 +329,7 @@ Example return value:
 ## keys
 
 ```js
-let keys = cache.keys();
+const keys = cache.keys();
 ```
 
 Gets all keys for objects stored in the cache instance.
@@ -347,7 +337,7 @@ Gets all keys for objects stored in the cache instance.
 ## options
 
 ```js
-let options = cache.options();
+const options = cache.options();
 ```
 
 Gets all configured options for a cache instance.
@@ -366,7 +356,7 @@ Example return value:
 
 (MIT)
 
-Copyright (c) 2017 Lee Crowe
+Copyright (c) 2023 Lee Crowe
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in

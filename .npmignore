@@ -1,0 +1,10 @@
+dist/tests
+lib/
+tests/
+node_modules/
+jest.config.js
+tsconfig.json
+.travis.yml
+TODO.txt
+example-usage.js
+example-usage-typescript.ts
